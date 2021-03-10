@@ -443,9 +443,62 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                           #column(width = 6,
                                                           # "Fluid 6")
                                                       )
+                                                      
+                                                      
                                                )
                                            ),
                                            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                           
+                                           
+                                           # new march 21
+                                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                           fluidRow(
+                                               column(12,
+                                                      #  div( verbatimTextOutput("int.trt1" ) ),
+                                                      fluidRow(
+                                                          column(12, offset = 0, style='padding:1px;',
+                                                                 div(plotOutput("plot.trtc", width=fig.width4, height=fig.height7)),
+                                                                 fluidRow(
+                                                                     h4(paste("Figure X test")),  
+                                                                     
+                                                                    # column(4, 
+                                                                         #   div( verbatimTextOutput("Ax1" ) )),
+                                                                     
+                                                                     #column(4,
+                                                                          #  div( verbatimTextOutput("Ax2" ) )
+                                                                     #),
+                                                                     
+                                                                     #column(4,
+                                                                           # div( verbatimTextOutput("Ax3" ) )
+                                                                     #),
+                                                                     
+                                                                 )
+                                                          )#,
+                                                          #column(width = 6,
+                                                          # "Fluid 6")
+                                                      )
+                                                      
+                                                      
+                                               )
+                                           ),
+                                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                     
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
                                            
                                            
                                   ),
@@ -1517,17 +1570,17 @@ server <- shinyServer(function(input, output   ) {
         
         X <- analysis() 
         
-        v0. <- isolate(as.numeric(    eval(parse(text= (input$adj.smoking)) ) ))
-        v1. <- isolate(as.numeric(    eval(parse(text= (input$adj.age)) ) ))
-        v2. <- isolate(as.numeric(    eval(parse(text= (input$adj.biomarker)) ) ))
-        v3. <- isolate(as.numeric(    eval(parse(text= (input$adj.blood)) ) ))
-        v4. <- isolate(as.numeric(    eval(parse(text= (input$adj.vas)) ) )   )
-        v5. <- isolate(as.numeric(    eval(parse(text= (input$adj.time)) ) ) )
-        v6. <- isolate(as.numeric(    eval(parse(text= (input$adj.fitness)) ) ) )
-        v7. <- isolate(as.numeric(    eval(parse(text= (input$adj.history)) ) ))
-        v8. <- isolate(as.numeric(    eval(parse(text= (input$adj.employed)) ) ))
-        v9. <- isolate(as.numeric(    eval(parse(text= (input$adj.sex)) ) ))
-        v10. <-isolate(as.numeric(    eval(parse(text= (input$adj.BMI)) ) ))
+        v0. <- isolate(as.numeric(    eval(parse(text= (input$adj.smoking   )) ) ))
+        v1. <- isolate(as.numeric(    eval(parse(text= (input$adj.age       )) ) ))
+        v2. <- isolate(as.numeric(    eval(parse(text= (input$adj.biomarker )) ) ))
+        v3. <- isolate(as.numeric(    eval(parse(text= (input$adj.blood     )) ) ))
+        v4. <- isolate(as.numeric(    eval(parse(text= (input$adj.vas       )) ) ))
+        v5. <- isolate(as.numeric(    eval(parse(text= (input$adj.time      )) ) ))
+        v6. <- isolate(as.numeric(    eval(parse(text= (input$adj.fitness   )) ) ))
+        v7. <- isolate(as.numeric(    eval(parse(text= (input$adj.history   )) ) ))
+        v8. <- isolate(as.numeric(    eval(parse(text= (input$adj.employed  )) ) ))
+        v9. <- isolate(as.numeric(    eval(parse(text= (input$adj.sex       )) ) ))
+        v10. <-isolate(as.numeric(    eval(parse(text= (input$adj.BMI       )) ) ))
         
         
         ##add in means of continuous vars here
@@ -1557,12 +1610,54 @@ server <- shinyServer(function(input, output   ) {
         
         # lets add in the means of vars in data instead
         
+        # add some contrasts mar2021, comparing fact1 between treatments
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+        k1 <- rms::contrast(X$A,
+
+                       list(fact1=c(0,1),
+                            smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                            covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
+                            trt=c(2)),
+
+                       list(fact1=c(0,1),
+                            smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                            covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
+                            trt=c(1)) )
+
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+        # z1 <- print(k1, X=TRUE, fun=exp)  # exponentiate
+        # z1 <- print(k1, X=TRUE)             # no exponentiation
+        
+        # execute function
+        p1x <- int.plot(k1, factor.="factor of interest",
+                        effect="Treatment 2 - Treatment 1", 
+                        first.grp="Absent", 
+                        second.grp="Present") 
+        # 
+        
+        
+        
+        
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        return(list(  A1=A1, A2= A2, A3= A3)) 
+        return(list(  A1=A1, A2= A2, A3= A3, p1x=p1x)) 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
     })
+    
+    
+    # new march21
+    output$plot.trtc <- renderPlot({   
+        
+      zummary()$p1x
+        
+      
+    })
+    
+    
+    
     output$int.trt1 <- renderPrint({
         return(print(zummary()$A1))
     }) 
