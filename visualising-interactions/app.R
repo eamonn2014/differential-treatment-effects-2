@@ -67,7 +67,8 @@ int.plot <- function(k1, factor.="factor of interest",
                      first.grp="Absent", 
                      second.grp="Present") {
     
-    v <- c(1/32,1/16,1/8, 1/4,1/2,  1, 2, 4 ,8, 16,32,64, 128) 
+    v <- c(1/128,1/64,1/32,1/16,1/8, 1/4,1/2,  1, 2, 4 ,8, 16,32,64, 128) 
+    v2 <-c("1/128","1/64","1/32","1/16","1/8","1/4","1/2","1","2","4","8","16","32","64","128")
     
     zz <- k1
     # log scale
@@ -92,16 +93,27 @@ int.plot <- function(k1, factor.="factor of interest",
         geom_errorbar(aes(ymax=log(ub), ymin=log(lb)), width=.1) +
         theme(legend.position="none") + ylab("Odds Ratio (OR > 1 better outcomes) ") + xlab(factor.) +
         
-        theme(axis.text=element_text(size=12),
-                axis.title=element_text(size=14,face="bold")) +
+        theme_bw() +
+        # tick labels and axis labels
+        theme(axis.text.x=element_text(size=14),
+                axis.title.x=element_text(size=14,face="bold")) +
+        
+        theme(axis.text.y=element_text(size=14),
+              axis.title.y=element_text(size=14,face="bold")) +
+        
+        theme(legend.position="none") +
+        
+        
         
         geom_hline(yintercept=log(1), linetype="dashed", color = "blue") +
         
         scale_y_continuous(
             breaks= log(v)  ,  
             limits = c(log(min(v)),log(max(v))),  
-            labels=     v
+            label=     v2
         ) +
+        
+        
         
         coord_flip() +
         
@@ -130,7 +142,7 @@ int.plot <- function(k1, factor.="factor of interest",
     
     k <- i + geom_text( aes(
         x = 1.5, y = (Scorex[1]+Scorex[2])/2,
-        label = paste0("Adjusted odds of response ",p0(exp(   max(Scorex[2],Scorex[1]) -  min(Scorex[2],Scorex[1])  ))," x"), 
+        label = paste0("Adjusted odds of response ",p1(exp(   max(Scorex[2],Scorex[1]) -  min(Scorex[2],Scorex[1])  ))," x"), 
         group = NULL,
         vjust = -1, #.3
         hjust = .7 #1
@@ -554,9 +566,9 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                column(12,
                                                       
                                                       textInput('tlevz', 
-                                                                strong(div(h5(tags$span(style="color:blue", "Treatment levels to complare")))), "1,2"),
+                                                                strong(div(h5(tags$span(style="color:blue", "Treatment levels to compare")))), "1,2"),
                                                       textInput('ilevz', 
-                                                                strong(div(h5(tags$span(style="color:blue", "Treatment levels to complare")))), "0,1"),
+                                                                strong(div(h5(tags$span(style="color:blue", "Factor levels to compare")))), "0,1"),
                                                       
                                                       div( verbatimTextOutput("int.trtc" ) ), 
                                                       
@@ -1814,7 +1826,7 @@ server <- shinyServer(function(input, output   ) {
         # z1 <- print(k1, X=TRUE)             # no exponentiation
         
         # execute function
-        p1x <- int.plot(k1, factor.="Factor of interest",
+        p1x <- int.plot(k1, factor.="Factor of Interest",
                         effect=paste0("Treatment ",M," - Treatment ",N,""), 
                         first.grp=paste0("level " ,M1), 
                         second.grp=paste0("level " ,N1)
