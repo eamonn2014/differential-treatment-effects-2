@@ -1,5 +1,6 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Rshiny ideas from on https://gallery.shinyapps.io/multi_regression/
+# visualising interactions
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 rm(list=ls())   
 set.seed(3333) # reproducible
@@ -52,6 +53,99 @@ getmode <- function(v) {
     uniqv <- unique(v)
     uniqv[which.max(tabulate(match(v, uniqv)))]
 }
+
+
+#~~~~~~~~~~~~~~~~~~
+
+# march21 new function to plot treatment contrasts
+
+
+
+int.plot <- function(k1, factor.="factor of interest",
+                     effect="Treatment 2 - Treatment 1", 
+                     first.grp="Absent", 
+                     second.grp="Present") {
+    
+    v <- c(1/32,1/16,1/8, 1/4,1/2,  1, 2, 4 ,8, 16,32,64, 128) 
+    
+    zz <- k1
+    # log scale
+    Scorex=as.vector(zz$Contrast)
+    lbx =  as.vector(zz$Lower)
+    ubx =  as.vector(zz$Upper)
+    
+    # create a dataset
+    df.plot <- data.frame(x=c(effect,effect),
+                          factor.=c(first.grp,second.grp ),
+                          Score=exp(Scorex),
+                          lb = exp(lbx),
+                          ub =exp(ubx))
+    
+    df.plot$factor. = factor(df.plot$factor., 
+                             levels = c(first.grp,second.grp ))
+    
+    
+    gp <- ggplot(df.plot, aes(x=factor., y=log(Score), fill="black", group=x))
+    gg <- gp + #geom_line(aes(linetype=x), size=.6) + 
+        geom_point(aes(shape=x), size=3) + 
+        geom_errorbar(aes(ymax=log(ub), ymin=log(lb)), width=.1) +
+        theme(legend.position="none") + ylab("Odds Ratio (OR > 1 better outcomes) ") + xlab(factor.) +
+        
+        geom_hline(yintercept=log(1), linetype="dashed", color = "blue") +
+        
+        scale_y_continuous(
+            breaks= log(v)  ,  
+            limits = c(log(min(v)),log(max(v))),  
+            labels=     v
+        ) +
+        
+        coord_flip() +
+        
+        geom_text(aes(   
+            y=log(40),
+            label = paste0(p3(Score),", 95%CI (" ,p3(lb),", ",p3(ub), ")"), 
+            vjust=-1.0), size=4.8, color='blue') +
+        
+        ggtitle( paste0("Adjusted Odds ratio of response for ", effect) )
+    
+    
+    gg <- gg + labs(caption = c("Interaction p-value 0.0xx, test the necessity of the orange interaction", 
+                                "Interaction present if the pattern differs between factors")) + 
+        theme(plot.caption = element_text(hjust=c(1, 0)))
+    
+    # Add text and arrows
+    i <- gg + geom_segment(
+        x = 1.5, y =  Scorex[1],
+        xend = 1.5, yend =  Scorex[2],
+        lineend = "round", # See available arrow types in example above
+        linejoin = "round",
+        size = .5, 
+        arrow = arrow(length = unit(0.2, "cm")),
+        colour = "#EC7014" # Also accepts "red", "blue' etc
+    ) 
+    
+    k <- i + geom_text( aes(
+        x = 1.5, y = (Scorex[1]+Scorex[2])/2,
+        label = paste0("Adjusted odds of response ",p0(exp(   max(Scorex[2],Scorex[1]) -  min(Scorex[2],Scorex[1])  ))," x"), 
+        group = NULL,
+        vjust = -1, #.3
+        hjust = .7 #1
+    ), size=4.8 , color="#EC7014") 
+    
+}
+
+
+
+
+
+
+#~~~~~~~~~~~~~~~~~#
+
+
+
+
+
+
 
 
 # varz <-  c(  "smoking", "age", "bmi", "covar3", "covar1", "vas", "time", 
@@ -355,7 +449,7 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                            
                                            
                                            
-                                           h4(paste("The boxes below can be used to adjust the factor reference levels (affecting forest plot only). The continuous variables are held at sensible values (we did not center the continuous variables in the regression). 
+                                           h4(paste("The boxes below can be used to adjust the factor reference levels (affecting forest plot and presentation of treatment effects at very bottom). The continuous variables are held at sensible values (we did not center the continuous variables in the regression). 
                                        Set the continuous to zero and observe the treatment comparison confidence intervals. Only the treatment bars will change as treatment interacts with all variables. ")),
                                            
                                            splitLayout(
@@ -454,7 +548,8 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                            fluidRow(
                                                column(12,
-                                                      #  div( verbatimTextOutput("int.trt1" ) ),
+                                                      div( verbatimTextOutput(print("int.trtc") ) ), 
+                                                      
                                                       fluidRow(
                                                           column(12, offset = 0, style='padding:1px;',
                                                                  div(plotOutput("plot.trtc", width=fig.width4, height=fig.height7)),
@@ -480,27 +575,9 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                       
                                                       
                                                )
-                                           ),
+                                           ), # end new mar 2021
                                            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                      
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
                                   ),
                                   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                   tabPanel("6 Forest plot, treatment x smoking only", value=3, 
@@ -760,6 +837,7 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                    ))),
                                   ),
                                   
+                                  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                   
                                   
                                   
@@ -1586,14 +1664,36 @@ server <- shinyServer(function(input, output   ) {
         ##add in means of continuous vars here
         
         d <- design()
-        
-        # v1.     <-d$mage       
-        # v2.     <-d$mcovar3      
-        # v3.     <-d$mcovar1   
-        # v4.     <-d$mvas       
-        # v5.     <-d$mtime      
-        # v6.     <-d$mcovar2    
+ 
+        # v0. <-  1
+        # v1. <-  40
+        # v2. <-  1.3
+        # v3. <-  5
+        # v4. <-  17
+        # v5. <-  4
+        # v6. <-  20
+        # v7. <-  0
+        # v8. <-  0
+        # v9. <-  0
+        # v10. <- 1
         # 
+        # A1 <- summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+        #               covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
+        #               trt=1, est.all=FALSE, vnames=c( "labels"))
+        # 
+        # 
+        # k1 <- rms::contrast(A,
+        #                     
+        #                     list(fact1=c(0,1),
+        #                          smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+        #                          covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
+        #                          trt=c(2)),
+        #                     
+        #                     list(fact1=c(0,1),
+        #                          smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+        #                          covar2=v6., binary2=v8., sex=v9., bmi=v10.,
+        #                          trt=c(1)) )
+        
         
         
         A1 <- summary(X$A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
@@ -1613,50 +1713,38 @@ server <- shinyServer(function(input, output   ) {
         # add some contrasts mar2021, comparing fact1 between treatments
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
-        k1 <- rms::contrast(X$A,
-
-                       list(fact1=c(0,1),
-                            smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-                            covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
-                            trt=c(2)),
-
-                       list(fact1=c(0,1),
-                            smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-                            covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
-                            trt=c(1)) )
+        # k1 <- rms::contrast(X$A,
+        # 
+        #                list(fact1=c(0,1),
+        #                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+        #                     covar2=v6., binary2=v8., sex=v9., bmi=v10.,
+        #                     trt=c(2)),
+        # 
+        #                list(fact1=c(0,1),
+        #                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+        #                     covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
+        #                     trt=c(1)) 
+        #                )
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
-        # z1 <- print(k1, X=TRUE, fun=exp)  # exponentiate
-        # z1 <- print(k1, X=TRUE)             # no exponentiation
-        
-        # execute function
-        p1x <- int.plot(k1, factor.="factor of interest",
-                        effect="Treatment 2 - Treatment 1", 
-                        first.grp="Absent", 
-                        second.grp="Present") 
+        #  z1 <- print(k1, X=TRUE, fun=exp)  # exponentiate
+        # # z1 <- print(k1, X=TRUE)             # no exponentiation
         # 
-        
-        
-        
-        
-        
+        # # execute function
+        # p1x <- int.plot(k1, factor.="factor of interest",
+        #                 effect="Treatment 2 - Treatment 1", 
+        #                 first.grp="Absent", 
+        #                 second.grp="Present") 
+
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        return(list(  A1=A1, A2= A2, A3= A3, p1x=p1x)) 
+        return(list(  A1=A1, A2= A2, A3= A3 )) 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
     })
     
     
-    # new march21
-    output$plot.trtc <- renderPlot({   
-        
-      zummary()$p1x
-        
-      
-    })
-    
-    
+  
     
     output$int.trt1 <- renderPrint({
         return(print(zummary()$A1))
@@ -1667,6 +1755,181 @@ server <- shinyServer(function(input, output   ) {
     output$int.trt3 <- renderPrint({
         return(print(zummary()$A3))
     }) 
+    
+    
+    #~~~~~~~~~~~~~~~~~~~new march21~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+    
+    zummaryx<- reactive({
+        
+        X <- analysis() 
+        
+        v0. <- (as.numeric(    eval(parse(text= (input$adj.smoking   )) ) ))
+        v1. <- (as.numeric(    eval(parse(text= (input$adj.age       )) ) ))
+        v2. <- (as.numeric(    eval(parse(text= (input$adj.biomarker )) ) ))
+        v3. <- (as.numeric(    eval(parse(text= (input$adj.blood     )) ) ))
+        v4. <- (as.numeric(    eval(parse(text= (input$adj.vas       )) ) ))
+        v5. <- (as.numeric(    eval(parse(text= (input$adj.time      )) ) ))
+        v6. <- (as.numeric(    eval(parse(text= (input$adj.fitness   )) ) ))
+        v7. <- (as.numeric(    eval(parse(text= (input$adj.history   )) ) ))
+        v8. <- (as.numeric(    eval(parse(text= (input$adj.employed  )) ) ))
+        v9. <- (as.numeric(    eval(parse(text= (input$adj.sex       )) ) ))
+        v10. <-(as.numeric(    eval(parse(text= (input$adj.BMI       )) ) ))
+        
+        
+        ##add in means of continuous vars here
+        
+        d <- design()
+        
+        # v0. <-  1
+        # v1. <-  40
+        # v2. <-  1.3
+        # v3. <-  5
+        # v4. <-  17
+        # v5. <-  4
+        # v6. <-  20
+        # v7. <-  0
+        # v8. <-  0
+        # v9. <-  0
+        # v10. <- 1
+        # 
+        # A1 <- summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+        #               covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
+        #               trt=1, est.all=FALSE, vnames=c( "labels"))
+        # 
+        # 
+        # k1 <- rms::contrast(A,
+        #                     
+        #                     list(fact1=c(0,1),
+        #                          smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+        #                          covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
+        #                          trt=c(2)),
+        #                     
+        #                     list(fact1=c(0,1),
+        #                          smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+        #                          covar2=v6., binary2=v8., sex=v9., bmi=v10.,
+        #                          trt=c(1)) )
+        
+        
+        
+        # A1 <- summary(X$A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+        #               covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
+        #               trt=1, est.all=FALSE, vnames=c( "labels"))
+        # 
+        # A2 <- summary(X$A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+        #               covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
+        #               trt=2, est.all=FALSE, vnames=c( "labels"))
+        # 
+        # A3 <- summary(X$A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+        #               covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
+        #               trt=3, est.all=FALSE, vnames=c( "labels"))
+        # 
+        # # lets add in the means of vars in data instead
+        
+        # add some contrasts mar2021, comparing fact1 between treatments
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+        k1 <- rms::contrast(X$A,
+                            
+                            list(fact1=c(0,1),
+                                 smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                 covar2=v6., binary2=v8., sex=v9., bmi=v10.,
+                                 trt=c(2)),
+                            
+                            list(fact1=c(0,1),
+                                 smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                 covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
+                                 trt=c(1)) 
+        )
+        
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+        z1 <- print(k1, X=TRUE, fun=exp)  # exponentiate
+        # z1 <- print(k1, X=TRUE)             # no exponentiation
+        
+        # execute function
+        p1x <- int.plot(k1, factor.="factor of interest",
+                        effect="Treatment 2 - Treatment 1", 
+                        first.grp="Absent", 
+                        second.grp="Present") 
+        
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        return(list(   p1x=p1x, k1=k1)) 
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+    })
+    
+    # new march21~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    output$plot.trtc <- renderPlot({   
+        zummaryx()$p1x
+    })
+    
+    output$int.trtc <- renderPrint({
+        k1 <- zummaryx()$k1
+        return(print(k1, X=TRUE, fun=exp))
+    }) 
+    ## end new march21~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # SMOKING TRT INTERACTION MODEL
@@ -1776,6 +2039,7 @@ server <- shinyServer(function(input, output   ) {
         )
         
         par(mfrow=c(1,1))
+        
         
         
     }) 
