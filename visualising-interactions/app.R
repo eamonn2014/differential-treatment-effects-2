@@ -1,6 +1,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Rshiny ideas from on https://gallery.shinyapps.io/multi_regression/
 # visualising interactions
+# need to fix the fun=exp on contrasts
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 rm(list=ls())   
 set.seed(3333) # reproducible
@@ -90,6 +91,9 @@ int.plot <- function(k1, factor.="factor of interest",
         geom_point(aes(shape=x), size=3) + 
         geom_errorbar(aes(ymax=log(ub), ymin=log(lb)), width=.1) +
         theme(legend.position="none") + ylab("Odds Ratio (OR > 1 better outcomes) ") + xlab(factor.) +
+        
+        theme(axis.text=element_text(size=12),
+                axis.title=element_text(size=14,face="bold")) +
         
         geom_hline(yintercept=log(1), linetype="dashed", color = "blue") +
         
@@ -548,7 +552,13 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                            fluidRow(
                                                column(12,
-                                                      div( verbatimTextOutput(print("int.trtc") ) ), 
+                                                      
+                                                      textInput('tlevz', 
+                                                                strong(div(h5(tags$span(style="color:blue", "Treatment levels to complare")))), "1,2"),
+                                                      textInput('ilevz', 
+                                                                strong(div(h5(tags$span(style="color:blue", "Treatment levels to complare")))), "0,1"),
+                                                      
+                                                      div( verbatimTextOutput("int.trtc" ) ), 
                                                       
                                                       fluidRow(
                                                           column(12, offset = 0, style='padding:1px;',
@@ -824,7 +834,8 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                            textInput('levz', 
                                                      strong(div(h5(tags$span(style="color:blue", "Contrast to compare smoking levels")))), "2,1"),
                                            
-                                           div( verbatimTextOutput(print("z99.")   ) ),
+                                           #div( verbatimTextOutput(print("z99.")   ) ),
+                                           div( verbatimTextOutput("z99.") ),
                                            
                                            fluidRow(
                                                column(width = 6, offset = 0, style='padding:1px;',
@@ -1665,36 +1676,7 @@ server <- shinyServer(function(input, output   ) {
         
         d <- design()
  
-        # v0. <-  1
-        # v1. <-  40
-        # v2. <-  1.3
-        # v3. <-  5
-        # v4. <-  17
-        # v5. <-  4
-        # v6. <-  20
-        # v7. <-  0
-        # v8. <-  0
-        # v9. <-  0
-        # v10. <- 1
-        # 
-        # A1 <- summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-        #               covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
-        #               trt=1, est.all=FALSE, vnames=c( "labels"))
-        # 
-        # 
-        # k1 <- rms::contrast(A,
-        #                     
-        #                     list(fact1=c(0,1),
-        #                          smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-        #                          covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
-        #                          trt=c(2)),
-        #                     
-        #                     list(fact1=c(0,1),
-        #                          smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-        #                          covar2=v6., binary2=v8., sex=v9., bmi=v10.,
-        #                          trt=c(1)) )
-        
-        
+         
         
         A1 <- summary(X$A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                       covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
@@ -1709,34 +1691,7 @@ server <- shinyServer(function(input, output   ) {
                       trt=3, est.all=FALSE, vnames=c( "labels"))
         
         # lets add in the means of vars in data instead
-        
-        # add some contrasts mar2021, comparing fact1 between treatments
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        
-        # k1 <- rms::contrast(X$A,
-        # 
-        #                list(fact1=c(0,1),
-        #                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-        #                     covar2=v6., binary2=v8., sex=v9., bmi=v10.,
-        #                     trt=c(2)),
-        # 
-        #                list(fact1=c(0,1),
-        #                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-        #                     covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
-        #                     trt=c(1)) 
-        #                )
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        
-        #  z1 <- print(k1, X=TRUE, fun=exp)  # exponentiate
-        # # z1 <- print(k1, X=TRUE)             # no exponentiation
-        # 
-        # # execute function
-        # p1x <- int.plot(k1, factor.="factor of interest",
-        #                 effect="Treatment 2 - Treatment 1", 
-        #                 first.grp="Absent", 
-        #                 second.grp="Present") 
-
+       
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return(list(  A1=A1, A2= A2, A3= A3 )) 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1829,18 +1784,28 @@ server <- shinyServer(function(input, output   ) {
         
         # add some contrasts mar2021, comparing fact1 between treatments
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        i <- as.numeric(unlist(strsplit(input$tlevz,",")))
+       
+        M <- i[1] 
+        N <- i[2]
+        
+        i <- as.numeric(unlist(strsplit(input$ilevz,",")))
+        
+        M1 <- i[1] 
+        N1 <- i[2]
+        
         
         k1 <- rms::contrast(X$A,
                             
-                            list(fact1=c(0,1),
+                            list(fact1=c(M1,N1),
                                  smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                                  covar2=v6., binary2=v8., sex=v9., bmi=v10.,
-                                 trt=c(2)),
+                                 trt=M),
                             
-                            list(fact1=c(0,1),
+                            list(fact1=c(M1,N1),
                                  smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                                  covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
-                                 trt=c(1)) 
+                                 trt=N) 
         )
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1849,10 +1814,11 @@ server <- shinyServer(function(input, output   ) {
         # z1 <- print(k1, X=TRUE)             # no exponentiation
         
         # execute function
-        p1x <- int.plot(k1, factor.="factor of interest",
-                        effect="Treatment 2 - Treatment 1", 
-                        first.grp="Absent", 
-                        second.grp="Present") 
+        p1x <- int.plot(k1, factor.="Factor of interest",
+                        effect=paste0("Treatment ",M," - Treatment ",N,""), 
+                        first.grp=paste0("level " ,M1), 
+                        second.grp=paste0("level " ,N1)
+        )
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return(list(   p1x=p1x, k1=k1)) 
@@ -1867,7 +1833,7 @@ server <- shinyServer(function(input, output   ) {
     
     output$int.trtc <- renderPrint({
         k1 <- zummaryx()$k1
-        return(print(k1, X=TRUE, fun=exp))
+        return(print(k1, X=TRUE, fun=exp, digits=6))
     }) 
     ## end new march21~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
