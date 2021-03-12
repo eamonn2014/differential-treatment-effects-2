@@ -56,19 +56,18 @@ getmode <- function(v) {
 }
 
 
-#~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # march21 new function to plot treatment contrasts
-
-
 
 int.plot <- function(k1, factor.="factor of interest",
                      effect="Treatment 2 - Treatment 1", 
                      first.grp="Absent", 
-                     second.grp="Present") {
+                     second.grp="Present",
+                     interaction.p=pv) {
     
     v <- c(1/128,1/64,1/32,1/16,1/8, 1/4,1/2,  1, 2, 4 ,8, 16,32,64, 128) 
-    v2 <-c("1/128","1/64","1/32","1/16","1/8","1/4","1/2","1","2","4","8","16","32","64","128")
+    v2 <-c("1/128","1/64","1/32","1/16","1/8","1/4","1/2","1","2","4","8","16","32","64","128")  # labels
     
     zz <- k1
     # log scale
@@ -81,16 +80,18 @@ int.plot <- function(k1, factor.="factor of interest",
                           factor.=c(first.grp,second.grp ),
                           Score=exp(Scorex),
                           lb = exp(lbx),
-                          ub =exp(ubx))
+                          ub =exp(ubx)
+                          )
     
     df.plot$factor. = factor(df.plot$factor., 
                              levels = c(first.grp,second.grp ))
-    
+    # capture interaction effect to present on graph
+    interaction. <- max(Scorex[2],Scorex[1]) -  min(Scorex[2],Scorex[1])  # difference on log odds scale, , could use abs(diff(Scorex))
     
     gp <- ggplot(df.plot, aes(x=factor., y=log(Score), fill="black", group=x))
     gg <- gp + #geom_line(aes(linetype=x), size=.6) + 
-        geom_point(aes(shape=x), size=3) + 
-        geom_errorbar(aes(ymax=log(ub), ymin=log(lb)), width=.1) +
+        geom_point(aes(shape=x), size=4,  color="blue") + 
+        geom_errorbar(aes(ymax=log(ub), ymin=log(lb)), width=0.1, size=1, color="blue") +
         theme(legend.position="none") + ylab("Odds Ratio (OR > 1 better outcomes) ") + xlab(factor.) +
         
         theme_bw() +
@@ -101,10 +102,11 @@ int.plot <- function(k1, factor.="factor of interest",
         theme(axis.text.y=element_text(size=14),
               axis.title.y=element_text(size=14,face="bold")) +
         
+        theme(plot.title = element_text(size = 16, face = "bold")) +
+        
         theme(legend.position="none") +
-        
-        
-        
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+        # line of no effect
         geom_hline(yintercept=log(1), linetype="dashed", color = "blue") +
         
         scale_y_continuous(
@@ -112,24 +114,29 @@ int.plot <- function(k1, factor.="factor of interest",
             limits = c(log(min(v)),log(max(v))),  
             label=     v2
         ) +
-        
-        
-        
+
         coord_flip() +
         
         geom_text(aes(   
             y=log(40),
             label = paste0(p3(Score),", 95%CI (" ,p3(lb),", ",p3(ub), ")"), 
-            vjust=-1.0), size=4.8, color='blue') +
+            vjust=-1.0), size=5.8, color='black') +
         
-        ggtitle( paste0("Adjusted Odds ratio of response for ", effect) )
+        ggtitle( paste0("Adjusted odds ratio for treatment effect (",effect,") for factor of interest, interaction p-value ",p5(interaction.p) ) )
+
+    gg <- gg + labs(caption = c(paste0("The p-value tests for the necessity of the interaction printed in orange, it is the result of a hypothesis test assessing the interaction with treatment alone."))) + 
+        
+        #theme(plot.caption = element_text(hjust=c(1, 0), size = 14, face = "bold")) 
+        
+        theme(plot.caption = element_text( size = 14, face = "bold")) 
+        # p + theme(
+        #     plot.title = element_text(color = "red", size = 12, face = "bold"),
+        #     plot.subtitle = element_text(color = "blue"),
+        #     plot.caption = element_text(color = "green", face = "italic")
+        # )
     
+    # Add arrows
     
-    gg <- gg + labs(caption = c("Interaction p-value 0.0xx, test the necessity of the orange interaction", 
-                                "Interaction present if the pattern differs between factors")) + 
-        theme(plot.caption = element_text(hjust=c(1, 0)))
-    
-    # Add text and arrows
     i <- gg + geom_segment(
         x = 1.5, y =  Scorex[1],
         xend = 1.5, yend =  Scorex[2],
@@ -139,33 +146,35 @@ int.plot <- function(k1, factor.="factor of interest",
         arrow = arrow(length = unit(0.2, "cm")),
         colour = "#EC7014" # Also accepts "red", "blue' etc
     ) 
+ 
+    # double headed arrow   
+ 
+    j <-  i  + geom_segment(
+            xend = 1.5, yend =  Scorex[1],
+            x = 1.5, y =  Scorex[2],
+            lineend = "round", # See available arrow types in example above
+            linejoin = "round",
+            size = .5, 
+            arrow = arrow(length = unit(0.2, "cm")),
+            colour = "#EC7014" # Also accepts "red", "blue' etc
+        )   
+ 
     
-    k <- i + geom_text( aes(
+   # now add text , we exponentiate the dif of the log odds ratios and show the interaction form both points of view
+    
+     k <- j + geom_text( aes(
         x = 1.5, y = (Scorex[1]+Scorex[2])/2,
-        label = paste0("Adjusted odds of response ",p1(exp(   max(Scorex[2],Scorex[1]) -  min(Scorex[2],Scorex[1])  ))," x"), 
+        label = paste0("Adjusted odds of response ",p3(exp(   interaction.  )),"x (alternatively ",p3(exp(  - interaction.  )),"x)"), 
         group = NULL,
         vjust = -1, #.3
         hjust = .7 #1
-    ), size=4.8 , color="#EC7014") 
+    ), size=5.8 , color="#EC7014") 
     
 }
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-
-
-
-
-#~~~~~~~~~~~~~~~~~#
-
-
-
-
-
-
-
-
-# varz <-  c(  "smoking", "age", "bmi", "covar3", "covar1", "vas", "time", 
-#            "covar2", "fact1", "binary2")
+ 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/packages/shinythemes/versions/1.1.2
@@ -576,7 +585,7 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                           column(12, offset = 0, style='padding:1px;',
                                                                  div(plotOutput("plot.trtc", width=fig.width4, height=fig.height7)),
                                                                  fluidRow(
-                                                                     h4(paste("Figure X test")),  
+                                                                     h4(paste("Interaction present if the patterns differs between factors. The interaction effect printed in orange text can be seen on the log scale in the tables 10 or 11 or 12. Further the p-value can be seen in the anova table on tab 8 and selecting the 'Treatment interacts with all variables' option.")),   
                                                                      
                                                                     # column(4, 
                                                                          #   div( verbatimTextOutput("Ax1" ) )),
@@ -1820,16 +1829,27 @@ server <- shinyServer(function(input, output   ) {
                                  trt=N) 
         )
         
+        
+        
+        
+        
+        # lets get the interaction p-value
+        x <- anova(X$A, india=FALSE )
+        pv <- x[grep("* fact1", rownames(x)),"P"]
+        
+        
+        
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
-        z1 <- print(k1, X=TRUE, fun=exp)  # exponentiate
+        z1 <- print(k1, X=TRUE, fun=exp)  # exponentiate...not used here, but see * below
         # z1 <- print(k1, X=TRUE)             # no exponentiation
         
-        # execute function
+        # execute plot function
         p1x <- int.plot(k1, factor.="Factor of Interest",
                         effect=paste0("Treatment ",M," - Treatment ",N,""), 
                         first.grp=paste0("level " ,M1), 
-                        second.grp=paste0("level " ,N1)
+                        second.grp=paste0("level " ,N1),
+                                          interaction.p=pv
         )
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1845,7 +1865,7 @@ server <- shinyServer(function(input, output   ) {
     
     output$int.trtc <- renderPrint({
         k1 <- zummaryx()$k1
-        return(print(k1, X=TRUE, fun=exp, digits=6))
+        return(print(k1, X=TRUE, fun=exp, digits=6)) #*
     }) 
     ## end new march21~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
