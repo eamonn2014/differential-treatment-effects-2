@@ -66,9 +66,9 @@ int.plot <- function(k1, factor.="factor of interest",
                      second.grp="Present",
                      interaction.p=pv) {
     
-    v <- c(1/128,1/64,1/32,1/16,1/8, 1/4,1/2,  1, 2, 4 ,8, 16,32,64, 128) 
-    v2 <-c("1/128","1/64","1/32","1/16","1/8","1/4","1/2","1","2","4","8","16","32","64","128")  # labels
-    
+    v <- 2^seq(-8, 8, by=1)
+    v2 <- as.character(MASS::fractions(v)) # labels
+
     zz <- k1
     # log scale
     Scorex=as.vector(zz$Contrast)
