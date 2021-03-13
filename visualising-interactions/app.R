@@ -66,16 +66,20 @@ int.plot <- function(k1, factor.="factor of interest",
                      second.grp="Present",
                      interaction.p=pv) {
     
+   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #https://stackoverflow.com/questions/11094822/numbers-in-geometric-progression
     v <- 2^seq(-8, 8, by=1)
-    v2 <- as.character(MASS::fractions(v)) # labels
-
-    zz <- k1
+    #https://stackoverflow.com/questions/5046026/print-number-as-reduced-fraction-in-r
+    v2 <- as.character(MASS::fractions(v)) # labels for axis, mix of fractions and numeric
+   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
     # log scale
+    zz <- k1
     Scorex=as.vector(zz$Contrast)
     lbx =  as.vector(zz$Lower)
     ubx =  as.vector(zz$Upper)
     
-    # create a dataset
+    # create a data set
     df.plot <- data.frame(x=c(effect,effect),
                           factor.=c(first.grp,second.grp ),
                           Score=exp(Scorex),
@@ -86,7 +90,7 @@ int.plot <- function(k1, factor.="factor of interest",
     df.plot$factor. = factor(df.plot$factor., 
                              levels = c(first.grp,second.grp ))
     # capture interaction effect to present on graph
-    interaction. <- max(Scorex[2],Scorex[1]) -  min(Scorex[2],Scorex[1])  # difference on log odds scale, , could use abs(diff(Scorex))
+    interaction. <- max(Scorex[2],Scorex[1]) -  min(Scorex[2],Scorex[1])  # difference on log odds scale, could use abs(diff(Scorex))
     
     gp <- ggplot(df.plot, aes(x=factor., y=log(Score), fill="black", group=x))
     gg <- gp + #geom_line(aes(linetype=x), size=.6) + 
@@ -95,6 +99,7 @@ int.plot <- function(k1, factor.="factor of interest",
         theme(legend.position="none") + ylab("Odds Ratio (OR > 1 better outcomes) ") + xlab(factor.) +
         
         theme_bw() +
+        
         # tick labels and axis labels
         theme(axis.text.x=element_text(size=14),
                 axis.title.x=element_text(size=14,face="bold")) +
@@ -109,10 +114,11 @@ int.plot <- function(k1, factor.="factor of interest",
         # line of no effect
         geom_hline(yintercept=log(1), linetype="dashed", color = "blue") +
         
+        
         scale_y_continuous(
             breaks= log(v)  ,  
             limits = c(log(min(v)),log(max(v))),  
-            label=     v2
+            label=     v2  # created earlier
         ) +
 
         coord_flip() +
@@ -124,10 +130,9 @@ int.plot <- function(k1, factor.="factor of interest",
         
         ggtitle( paste0("Adjusted odds ratio for treatment effect (",effect,") for factor of interest, interaction p-value ",p5(interaction.p) ) )
 
-    gg <- gg + labs(caption = c(paste0("The p-value tests for the necessity of the interaction printed in orange, it is the result of a hypothesis test assessing the interaction with treatment alone."))) + 
+        gg <- gg + labs(caption = c(paste0("The p-value tests for the necessity of the interaction printed in orange, it is the result of a hypothesis test assessing the interaction with treatment alone."))) + 
         
         #theme(plot.caption = element_text(hjust=c(1, 0), size = 14, face = "bold")) 
-        
         theme(plot.caption = element_text( size = 14, face = "bold")) 
         # p + theme(
         #     plot.title = element_text(color = "red", size = 12, face = "bold"),
