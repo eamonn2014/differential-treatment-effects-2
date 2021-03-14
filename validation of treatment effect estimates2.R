@@ -32,8 +32,8 @@ options(width=200)
 
 # select the design to simulate!!!!!!!!
 Design = "Treatment interacts with all variables" 
-Design = "Treatment interacts with smoking only" 
-Design = "No-interaction logit-additive model"
+#Design = "Treatment interacts with smoking only" 
+#Design = "No-interaction logit-additive model"
 
 # coefficients on log odds scale
 
@@ -845,8 +845,9 @@ i.plot <- function(
   # now add text , we exponentiate the dif of the log odds ratios and show the interaction form both points of view
   
   k <- j + geom_text( aes(
-    x = 1.5, y = (Scorex[1]+Scorex[2])/2,
-    label = paste0("Interaction multiplication factor: ",p3(exp(res$double$Contrast)),", 95%CI (" ,p3(exp(res$double$Lower)),", ",p3(exp(res$double$Upper)), ")"), 
+    x = 1.4, #y = (Scorex[1]+Scorex[2])/2,
+    y=log(40),
+    label = paste0("Interaction multiplication factor:\n ",p3(exp(res$double$Contrast)),", 95%CI (" ,p3(exp(res$double$Lower)),", ",p3(exp(res$double$Upper)), ")"), 
     group = NULL,
     vjust = -1, #.3
     hjust = .7 #1
@@ -862,8 +863,9 @@ res <- statz(v="age",   M= 1,  N=3,   M1 =10 , N1 = 20)
 
 (z <- i.plot(  res =statz(v="fact1",     M= 1,  N=2,   M1 =0 ,  N1 = 1)  ))
 (z <- i.plot(  res =statz(v="fact1",     M= 1,  N=3,   M1 =0 ,  N1 = 1)  ))
-(z <- i.plot(res <- statz(v="age",       M= 1,  N=3,   M1 =10 , N1 = 20)  ))
-(z <- i.plot(res <- statz(v="smoking",   M= 1,  N=3,   M1 =1 ,  N1 = 3)  ))
+(z <- i.plot(res <- statz(v="age",       M= 1,  N=3,   M1 =10 , N1 = 15)  ))
+(z <- i.plot(res <- statz(v="smoking",   M= 3,  N=1,   M1 =1 ,  N1 = 2)  ))
 
+(z <- i.plot(res <- statz(v="sex",   M= 1,  N=3,   M1 =0 ,  N1 = 1)  ))
 
  
