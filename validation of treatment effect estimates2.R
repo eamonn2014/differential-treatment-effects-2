@@ -1,5 +1,7 @@
 
+# plotting interactions alot of code.
 # we have defaulted to truth as no interaction 
+# need to add adjusted for information to graph.
 
 rm(list=ls())
 set.seed(1234)
@@ -254,9 +256,55 @@ v10. <- 1 # BMI
 # M1 and N1 are the independent variable levels
 
 statz <- function( v="fact1", M=1,  N=2,   M1=0 , N1=1)  {
+  
+  
+ if (v %in% "smoking") {
+  
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+  k1 <- rms::contrast(A,
+                      
+                      list(fact1=v10.,
+                           smoking=c(M1,N1), age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                           covar2=v6., binary2=v8., sex=v9., bmi=v10.,
+                           trt=N),
+                      
+                      list(fact1=v10.,
+                           smoking=c(M1,N1), age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                           covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
+                           trt=M) 
+  )
+  
+  
+  double <- contrast(A, 
+                     list(trt=N,  smoking=N1
+                     ),
+                     
+                     list(trt=M,  smoking=N1 
+                     ),
+                     
+                     list(trt=N,  smoking=M1
+                     ),
+                     
+                     list(trt=M,  smoking=M1 
+                     ), 
+                     conf.int=.95)
+  
+  
+  # lets get the interaction p-value
+  x <- anova(A, india=FALSE )
+  pv <- x[grep("* smoking", rownames(x)),"P"]
+  pvalue <- x[grep("* smoking", rownames(x)),]
+  M=M;N=N;M1=M1;N1=N1;v=v;
+  
+  
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
 
 
-if (v %in% "fact1") {
+} else if (v %in% "fact1") {
 
   k1 <- rms::contrast(A,   
                       list(fact1=c(M1,N1),  
@@ -290,7 +338,7 @@ if (v %in% "fact1") {
     x <- anova(A, india=FALSE )
     pv <- x[grep("* fact1", rownames(x)),"P"]
     pvalue <- x[grep("* fact1", rownames(x)),]
-    M=M;N=N;M1=M1;N1=N1
+    M=M;N=N;M1=M1;N1=N1;v=v;
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
@@ -330,7 +378,7 @@ if (v %in% "fact1") {
   x <- anova(A, india=FALSE )
   pv <- x[grep("* age", rownames(x)),"P"]
   pvalue <- x[grep("* age", rownames(x)),]
-  M=M;N=N;M1=M1;N1=N1
+  M=M;N=N;M1=M1;N1=N1;v=v;
 
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -371,7 +419,7 @@ if (v %in% "fact1") {
   x <- anova(A, india=FALSE )
   pv <- x[grep("* bmi", rownames(x)),"P"]
   pvalue <- x[grep("* bmi", rownames(x)),]
-  M=M;N=N;M1=M1;N1=N1
+  M=M;N=N;M1=M1;N1=N1;v=v;
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
@@ -412,7 +460,7 @@ if (v %in% "fact1") {
   pv <- x[grep("* covar3", rownames(x)),"P"]
   pvalue <- x[grep("* covar3", rownames(x)),]
   
-  M=M;N=N;M1=M1;N1=N1
+  M=M;N=N;M1=M1;N1=N1;v=v;
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -453,7 +501,7 @@ if (v %in% "fact1") {
   x <- anova(A, india=FALSE )
   pv <- x[grep("* covar1", rownames(x)),"P"]
   pvalue <- x[grep("* covar1", rownames(x)),]
-  M=M;N=N;M1=M1;N1=N1
+  M=M;N=N;M1=M1;N1=N1;v=v;
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
@@ -492,7 +540,7 @@ if (v %in% "fact1") {
   x <- anova(A, india=FALSE )
   pv <- x[grep("* vas", rownames(x)),"P"]
   pvalue <- x[grep("* vas", rownames(x)),]
-  M=M;N=N;M1=M1;N1=N1
+  M=M;N=N;M1=M1;N1=N1;v=v;
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -533,7 +581,7 @@ if (v %in% "fact1") {
   pv <- x[grep("* covar2", rownames(x)),"P"]
   
   pvalue <- x[grep("* covar2", rownames(x)),]
-  M=M;N=N;M1=M1;N1=N1
+  M=M;N=N;M1=M1;N1=N1;v=v;
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
@@ -575,7 +623,7 @@ if (v %in% "fact1") {
   x <- anova(A, india=FALSE )
   pv <- x[grep("* time", rownames(x)),"P"]
   pvalue <- x[grep("* time", rownames(x)),]
-  M=M;N=N;M1=M1;N1=N1
+  M=M;N=N;M1=M1;N1=N1;v=v;
   
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -618,7 +666,7 @@ if (v %in% "fact1") {
   x <- anova(A, india=FALSE )
   pv <- x[grep("* sex", rownames(x)),"P"]
   pvalue <- x[grep("* sex", rownames(x)),]
-  M=M;N=N;M1=M1;N1=N1
+  M=M;N=N;M1=M1;N1=N1;v=v;
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -658,10 +706,10 @@ if (v %in% "fact1") {
   x <- anova(A, india=FALSE )
   pv <- x[grep("* binary2", rownames(x)),"P"]
   pvalue <- x[grep("* binary2", rownames(x)),]
-  M=M;N=N;M1=M1;N1=N1
+  M=M;N=N;M1=M1;N1=N1;v=v;
   
 }
-  return(list(k1=k1, double=double, pv=pv, pvalue=pvalue, M=M, N=N, M1=M1, N1=N1))
+  return(list(k1=k1, double=double, pv=pv, pvalue=pvalue, M=M, N=N, M1=M1, N1=N1,v=v))
   
 }
   
@@ -674,9 +722,7 @@ if (v %in% "fact1") {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   
-res <- statz(v="fact1", M= 1,  N=2,   M1 =0 ,  N1 = 1)  
-res <- statz(v="age",   M= 1,  N=2,   M1 =10 , N1 = 20)  
-res <- statz(v="age",   M= 1,  N=3,   M1 =10 , N1 = 20)  
+
 
   
 #### now let us write a plot function 
@@ -697,7 +743,7 @@ i.plot <- function(
   
   M=res$M
   N=res$N
-  
+  vx=res$v
   effect = names(res$k1)[1]
   
   # create a data set
@@ -727,7 +773,7 @@ i.plot <- function(
   gg <- gp + #geom_line(aes(linetype=x), size=.6) + 
     geom_point(aes(shape=x), size=4,  color="blue") + 
     geom_errorbar(aes(ymax=log(ub), ymin=log(lb)), width=0.1, size=1, color="blue") +
-    theme(legend.position="none") + ylab("Odds Ratio (OR > 1 better outcomes) ") + xlab("") +
+    theme(legend.position="none") + ylab("Odds Ratio (OR > 1 better outcomes) ") + xlab( vx) +
     
     theme_bw() +
     
@@ -759,7 +805,7 @@ i.plot <- function(
       label = paste0(p3(Score),", 95%CI (" ,p3(lb),", ",p3(ub), ")"), 
       vjust=-1.0), size=5.8, color='black') +
     
-    ggtitle( paste0("Adjusted odds ratio for treatment effect (Treatment ",N," - Treatment ",M,") for ",effect,", interaction p-value ",p5(res$pv) ) )
+    ggtitle( paste0("Adjusted odds ratio for treatment effect (Treatment ",N," - Treatment ",M,") for ",vx,", interaction p-value ",p5(res$pv) ) )
   
   gg <- gg + labs(caption = c(paste0("The p-value tests for the necessity of the interaction printed in orange, it is the result of a hypothesis test assessing the interaction with treatment alone."))) + 
     
@@ -800,7 +846,7 @@ i.plot <- function(
   
   k <- j + geom_text( aes(
     x = 1.5, y = (Scorex[1]+Scorex[2])/2,
-    label = paste0("Adjusted odds of response ",p3(exp(   interaction.  )),"x (alternatively ",p3(exp(  - interaction.  )),"x)"), 
+    label = paste0("Interaction multiplication factor: ",p3(exp(res$double$Contrast)),", 95%CI (" ,p3(exp(res$double$Lower)),", ",p3(exp(res$double$Upper)), ")"), 
     group = NULL,
     vjust = -1, #.3
     hjust = .7 #1
@@ -808,13 +854,16 @@ i.plot <- function(
   
 }
 
+res <- statz(v="fact1", M= 1,  N=2,   M1 =0 ,  N1 = 1)  
+res <- statz(v="age",   M= 1,  N=2,   M1 =10 , N1 = 20)  
+res <- statz(v="age",   M= 1,  N=3,   M1 =10 , N1 = 20)  
 
+(z <- i.plot(  res =statz(v="fact1",     M= 1,  N=2,   M1 =1 ,  N1 = 0)  ))
 
-z <- i.plot(  res =statz(v="fact1", M= 1,  N=2,   M1 =0 ,  N1 = 1)  )
-z
-z <- i.plot(  res =statz(v="fact1", M= 1,  N=3,   M1 =0 ,  N1 = 1)  )
-
-z
+(z <- i.plot(  res =statz(v="fact1",     M= 1,  N=2,   M1 =0 ,  N1 = 1)  ))
+(z <- i.plot(  res =statz(v="fact1",     M= 1,  N=3,   M1 =0 ,  N1 = 1)  ))
+(z <- i.plot(res <- statz(v="age",       M= 1,  N=3,   M1 =10 , N1 = 20)  ))
+(z <- i.plot(res <- statz(v="smoking",   M= 1,  N=3,   M1 =1 ,  N1 = 3)  ))
 
 
  
