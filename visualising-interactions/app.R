@@ -56,53 +56,74 @@ getmode <- function(v) {
 }
 
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# march21 new function to plot treatment contrasts
+############################################################
+#### now let us write a plot function to present interactions
+###########################################################
 
-int.plot <- function(k1, factor.="factor of interest",
-                     effect="Treatment 2 - Treatment 1", 
-                     first.grp="Absent", 
-                     second.grp="Present",
-                     interaction.p=pv) {
+i.plot <- function( v , M,  N,   M1,  N1) {
     
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #https://stackoverflow.com/questions/11094822/numbers-in-geometric-progression
-    v <- 2^seq(-8, 8, by=1)
-    #https://stackoverflow.com/questions/5046026/print-number-as-reduced-fraction-in-r
-    v2 <- as.character(MASS::fractions(v)) # labels for axis, mix of fractions and numeric
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        
-    # log scale
-    zz <- k1
+    # v is the factor of interest
+    # M treatment level
+    # N treatment level
+    # M1 factor level 
+    # N1 factor level
+    
+    # original stats are on log scale
+    zz <- res$k1
     Scorex=as.vector(zz$Contrast)
     lbx =  as.vector(zz$Lower)
     ubx =  as.vector(zz$Upper)
     
-    # create a data set
-    df.plot <- data.frame(x=c(effect,effect),
-                          factor.=c(first.grp,second.grp ),
+    M=res$M
+    N=res$N
+    vx=res$v
+    effect = names(res$k1)[1]
+    
+    # create a data set where we exponentiate the stats
+    df.plot <- data.frame(factor.=c(res$M1,res$N1 ),
+                          x=paste0("Treatment ",N," - Treatment ",M), 
                           Score=exp(Scorex),
                           lb = exp(lbx),
                           ub =exp(ubx)
-                          )
+    )
     
-    df.plot$factor. = factor(df.plot$factor., 
-                             levels = c(first.grp,second.grp ))
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #https://stackoverflow.com/questions/11094822/numbers-in-geometric-progression
+    #https://stackoverflow.com/questions/5046026/print-number-as-reduced-fraction-in-r
+    v <- 2^seq(-8, 8, by=1)
+    v2 <- as.character(MASS::fractions(v)) # labels for axis, mix of fractions and numeric
+    
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # get the y axis the same whether 0,1 or 1,0 ?
+    if (res$M1 < res$N1) {
+        
+        df.plot$factor. = factor(df.plot$factor., levels = c(res$M1,res$N1 ))
+        
+    } else {
+        
+        df.plot$factor. = factor(df.plot$factor., levels = c(res$N1,res$M1 ))
+        
+    }
+    
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # capture interaction effect to present on graph
-    interaction. <- max(Scorex[2],Scorex[1]) -  min(Scorex[2],Scorex[1])  # difference on log odds scale, could use abs(diff(Scorex))
+    # difference on log odds scale, could use abs(diff(Scorex))
+    # interaction. <- max(Scorex[2],Scorex[1]) -  min(Scorex[2],Scorex[1])  
+    interaction. <-  res$double$Contrast[[1]]
     
     gp <- ggplot(df.plot, aes(x=factor., y=log(Score), fill="black", group=x))
     gg <- gp + #geom_line(aes(linetype=x), size=.6) + 
         geom_point(aes(shape=x), size=4,  color="blue") + 
         geom_errorbar(aes(ymax=log(ub), ymin=log(lb)), width=0.1, size=1, color="blue") +
-        theme(legend.position="none") + ylab("Odds Ratio (OR > 1 better outcomes) ") + xlab(factor.) +
+        theme(legend.position="none") + ylab("Odds Ratio (OR > 1 better outcomes) ") + xlab( vx) +
         
         theme_bw() +
         
         # tick labels and axis labels
         theme(axis.text.x=element_text(size=14),
-                axis.title.x=element_text(size=14,face="bold")) +
+              axis.title.x=element_text(size=14,face="bold")) +
         
         theme(axis.text.y=element_text(size=14),
               axis.title.y=element_text(size=14,face="bold")) +
@@ -113,63 +134,43 @@ int.plot <- function(k1, factor.="factor of interest",
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         # line of no effect
         geom_hline(yintercept=log(1), linetype="dashed", color = "blue") +
-        
-        
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         scale_y_continuous(
             breaks= log(v)  ,  
             limits = c(log(min(v)),log(max(v))),  
             label=     v2  # created earlier
         ) +
-
+        
         coord_flip() +
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         
         geom_text(aes(   
             y=log(40),
             label = paste0(p3(Score),", 95%CI (" ,p3(lb),", ",p3(ub), ")"), 
             vjust=-1.0), size=5.8, color='black') +
         
-        ggtitle( paste0("Adjusted odds ratio for treatment effect (",effect,") for factor of interest, interaction p-value ",p5(interaction.p) ) )
-
-        gg <- gg + labs(caption = c(paste0("The p-value tests for the necessity of the interaction printed in orange, it is the result of a hypothesis test assessing the interaction with treatment alone."))) + 
+        ggtitle( paste0("Adjusted odds ratio for treatment effect (Treatment ",N," - Treatment ",M,") for ",vx,", interaction p-value ",p5(res$pv) ) )
+    
+    gg <- gg + labs(caption = c(paste0("The p-value tests for the necessity of the interaction printed in orange, it is the result of a hypothesis test assessing the interaction with treatment alone."))) + 
         
-        #theme(plot.caption = element_text(hjust=c(1, 0), size = 14, face = "bold")) 
         theme(plot.caption = element_text( size = 14, face = "bold")) 
-        # p + theme(
-        #     plot.title = element_text(color = "red", size = 12, face = "bold"),
-        #     plot.subtitle = element_text(color = "blue"),
-        #     plot.caption = element_text(color = "green", face = "italic")
-        # )
     
     # Add arrows
-    
     i <- gg + geom_segment(
-        x = 1.5, y =  Scorex[1],
-        xend = 1.5, yend =  Scorex[2],
+        x = 1.5, y =  Scorex[1],  #y start of arrow
+        xend = 1.5, yend =  Scorex[2],  # end of arrow yend 
         lineend = "round", # See available arrow types in example above
         linejoin = "round",
         size = .5, 
         arrow = arrow(length = unit(0.2, "cm")),
         colour = "#EC7014" # Also accepts "red", "blue' etc
     ) 
- 
-    # double headed arrow   
- 
-    j <-  i  + geom_segment(
-            xend = 1.5, yend =  Scorex[1],
-            x = 1.5, y =  Scorex[2],
-            lineend = "round", # See available arrow types in example above
-            linejoin = "round",
-            size = .5, 
-            arrow = arrow(length = unit(0.2, "cm")),
-            colour = "#EC7014" # Also accepts "red", "blue' etc
-        )   
- 
     
-   # now add text , we exponentiate the dif of the log odds ratios and show the interaction form both points of view
-    
-     k <- j + geom_text( aes(
-        x = 1.5, y = (Scorex[1]+Scorex[2])/2,
-        label = paste0("Adjusted odds of response ",p3(exp(   interaction.  )),"x (alternatively ",p3(exp(  - interaction.  )),"x)"), 
+    # now add text , we exponentiate the dif of the log odds ratios and show the interaction form both points of view
+    k <- i + geom_text( aes(
+        x = 1.4, #y = (Scorex[1]+Scorex[2])/2,
+        y=log(75),
+        label = paste0("Interaction multiplication factor:\n ",p3(exp(res$double$Contrast)),", 95%CI (" ,p3(exp(res$double$Lower)),", ",p3(exp(res$double$Upper)), ")"), 
         group = NULL,
         vjust = -1, #.3
         hjust = .7 #1
@@ -177,7 +178,10 @@ int.plot <- function(k1, factor.="factor of interest",
     
 }
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+# function ended
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
  
 
@@ -579,10 +583,59 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                            fluidRow(
                                                column(12,
                                                       
-                                                      textInput('tlevz', 
-                                                                strong(div(h5(tags$span(style="color:blue", "Treatment levels to compare")))), "1,2"),
-                                                      textInput('ilevz', 
-                                                                strong(div(h5(tags$span(style="color:blue", "Factor levels to compare")))), "0,1"),
+                                                      # sliderTextInput("Varsx",
+                                                      #                 div(h5(tags$span(style="color:blue", "Select the predictor of interest "))), 
+                                                      #                 choices = c("smoking", "age", "bmi", "covar3", "covar1", "vas", "time", 
+                                                      #                             "covar2", "fact1", "sex","binary2"), #add further months 
+                                                      #                 selected = c("smoking"), #values which will be selected by default
+                                                      #                 animate = FALSE, grid = FALSE, 
+                                                      #                 hide_min_max = FALSE, from_fixed = FALSE,
+                                                      #                 to_fixed = FALSE, from_min = NULL, from_max = NULL, to_min = NULL,
+                                                      #                 to_max = NULL, force_edges = FALSE, width = NULL, pre = NULL,
+                                                      #                 post = NULL, dragRange = TRUE),
+                                                      # 
+                                                      
+                                                      
+                                                      # textInput('tlevz', 
+                                                      #           strong(div(h5(tags$span(style="color:blue", "Treatment levels to compare")))), "1,2"),
+                                                      # textInput('ilevz', 
+                                                      #           strong(div(h5(tags$span(style="color:blue", "Factor levels to compare")))), "0,1"),
+                                                      
+                                                      
+                                                      
+                                                      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                      
+                                                      sliderTextInput("Varsx",
+                                                                      div(h5(tags$span(style="color:blue", "Select the predictor of interest "))), 
+                                                                      choices = c("smoking", "age", "bmi", "covar3", "covar1", "vas", "time", 
+                                                                                  "covar2", "fact1", "sex","binary2"), #add further months 
+                                                                      selected = c("smoking"), #values which will be selected by default
+                                                                      animate = FALSE, grid = FALSE, 
+                                                                      hide_min_max = FALSE, from_fixed = FALSE,
+                                                                      to_fixed = FALSE, from_min = NULL, from_max = NULL, to_min = NULL,
+                                                                      to_max = NULL, force_edges = FALSE, width = NULL, pre = NULL,
+                                                                      post = NULL, dragRange = TRUE),
+                                                      
+                                                      
+                                                      
+                                                      
+                                                      splitLayout(
+                                                          
+                                                          textInput("treatment.level1x", div(h5(tags$span(style="color:blue", "Treatment level (enter 1,2 or 3) "))), value= "1"),
+                                                          textInput("treatment.level2x", div(h5(tags$span(style="color:blue", "Treatment level (enter 1,2 or 3)"))), value= "2")
+                                                         
+                                                      ),
+                                                      h4(paste("Select the predictor levels. For factors enter (1,2,3) for binary factors enter (0,1), for continuous variables enter a range for that variable.")),
+                                                      splitLayout(
+                                                          
+                                                          textInput("interest.level1x", div(h5(tags$span(style="color:blue", "lower level  of variable of interest "))), value= "1"),
+                                                          textInput("interest.level2x", div(h5(tags$span(style="color:blue", "upper level  of variable of interest"))), value= "2")
+                                                          
+                                                      ),
+                                                      
+                                                      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                      
+                                                   
                                                       
                                                       div( verbatimTextOutput("int.trtc" ) ), 
                                                       
@@ -1746,6 +1799,18 @@ server <- shinyServer(function(input, output   ) {
         
         X <- analysis() 
         
+        d <- doubleDx()
+        
+        k1     =d$k1
+        double =d$double
+        pv     =d$pv
+        pvalue =d$pvalue
+        M      =d$M
+        N      =d$N
+        M1     =d$M1
+        N1     =d$N1
+        v      =d$v
+        
         v0. <- (as.numeric(    eval(parse(text= (input$adj.smoking   )) ) ))
         v1. <- (as.numeric(    eval(parse(text= (input$adj.age       )) ) ))
         v2. <- (as.numeric(    eval(parse(text= (input$adj.biomarker )) ) ))
@@ -1810,39 +1875,38 @@ server <- shinyServer(function(input, output   ) {
         
         # add some contrasts mar2021, comparing fact1 between treatments
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        i <- as.numeric(unlist(strsplit(input$tlevz,",")))
-       
-        M <- i[1] 
-        N <- i[2]
-        
-        i <- as.numeric(unlist(strsplit(input$ilevz,",")))
-        
-        M1 <- i[1] 
-        N1 <- i[2]
-        
-        
-        k1 <- rms::contrast(X$A,
-                            
-                            list(fact1=c(M1,N1),
-                                 smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-                                 covar2=v6., binary2=v8., sex=v9., bmi=v10.,
-                                 trt=M),
-                            
-                            list(fact1=c(M1,N1),
-                                 smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-                                 covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
-                                 trt=N) 
-        )
+         
+        # M <- as.numeric(unlist(strsplit(input$treatment.level1x,",")))
+        # N <- as.numeric(unlist(strsplit(input$treatment.level2x,",")))
+        # 
+        # M1 <- as.numeric(unlist(strsplit(input$interest.level1x,",")))
+        # N1 <- as.numeric(unlist(strsplit(input$interest.level1x,",")))
+
+        p1x <- i.plot(  v=v,  M= M,  N=N,   M1 =M1 ,  N1 = N1)  
         
         
-        
-        
-        
-        # lets get the interaction p-value
-        x <- anova(X$A, india=FALSE )
-        pv <- x[grep("* fact1", rownames(x)),"P"]
-        
-        
+        # k1 <- rms::contrast(X$A,
+        # 
+        #                     list(fact1=c(M1,N1),
+        #                          smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+        #                          covar2=v6., binary2=v8., sex=v9., bmi=v10.,
+        #                          trt=M),
+        # 
+        #                     list(fact1=c(M1,N1),
+        #                          smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+        #                          covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
+        #                          trt=N)
+        # )
+        # 
+        # 
+        # 
+        # 
+        # 
+        # # lets get the interaction p-value
+        # x <- anova(X$A, india=FALSE )
+        # pv <- x[grep("* fact1", rownames(x)),"P"]
+
+
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
@@ -1850,12 +1914,12 @@ server <- shinyServer(function(input, output   ) {
         # z1 <- print(k1, X=TRUE)             # no exponentiation
         
         # execute plot function
-        p1x <- int.plot(k1, factor.="Factor of Interest",
-                        effect=paste0("Treatment ",M," - Treatment ",N,""), 
-                        first.grp=paste0("level " ,M1), 
-                        second.grp=paste0("level " ,N1),
-                                          interaction.p=pv
-        )
+        # p1x <- int.plot(k1, factor.="Factor of Interest",
+        #                 effect=paste0("Treatment ",M," - Treatment ",N,""), 
+        #                 first.grp=paste0("level " ,M1), 
+        #                 second.grp=paste0("level " ,N1),
+        #                                   interaction.p=pv
+        # )
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return(list(   p1x=p1x, k1=k1)) 
@@ -2437,6 +2501,565 @@ server <- shinyServer(function(input, output   ) {
     output$DD2 <- renderPrint({
         return( print(doubleD()$pooled, digits=4))
     }) 
+    
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # new
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+    
+    doubleDx <- reactive({
+        
+        X <- analysis()
+        A <- X$A  # trt x all model
+        da <- lp1()$datx 
+        
+        
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        v  <- input$Varsx
+        
+        
+        M <- as.numeric(unlist(strsplit(input$treatment.level1x,",")))
+        N <- as.numeric(unlist(strsplit(input$treatment.level2x,",")))
+        
+        M1 <- as.numeric(unlist(strsplit(input$interest.level1x,",")))
+        N1 <- as.numeric(unlist(strsplit(input$interest.level1x,",")))
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+        
+        if (v %in% "smoking") {
+            
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+            k1 <- rms::contrast(A,
+                                
+                                list(fact1=v10.,
+                                     smoking=c(M1,N1), age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                     covar2=v6., binary2=v8., sex=v9., bmi=v10.,
+                                     trt=N),
+                                
+                                list(fact1=v10.,
+                                     smoking=c(M1,N1), age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                     covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
+                                     trt=M) 
+            )
+            
+            
+            double <- contrast(A, 
+                               list(trt=N,  smoking=N1
+                               ),
+                               
+                               list(trt=M,  smoking=N1 
+                               ),
+                               
+                               list(trt=N,  smoking=M1
+                               ),
+                               
+                               list(trt=M,  smoking=M1 
+                               ), 
+                               conf.int=.95)
+            
+            
+            # lets get the interaction p-value
+            x <- anova(A, india=FALSE )
+            pv <- x[grep("* smoking", rownames(x)),"P"]
+            pvalue <- x[grep("* smoking", rownames(x)),]
+            M=M;N=N;M1=M1;N1=N1;v=v;
+            
+            
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+            
+            
+        } else if (v %in% "fact1") {
+            
+            k1 <- rms::contrast(A,   
+                                list(fact1=c(M1,N1),  
+                                     smoking=v0.,  age=v1., covar3=v2., covar1=v3., vas=v4., time =v5.,
+                                     covar2=v6., binary2=v8., sex=v9. , bmi=v10., 
+                                     trt=c(N)),
+                                
+                                list(fact1=c(M1,N1),    
+                                     smoking=v0.,  age=v1., covar3=v2., covar1=v3., vas=v4., time =v5.,
+                                     covar2=v6., binary2=v8., sex=v9. , bmi=v10., 
+                                     trt=c(M))
+                                
+            )
+            
+            double <- contrast(A, 
+                               list(trt=N,  fact1=N1
+                               ),
+                               
+                               list(trt=M,  fact1=N1 
+                               ),
+                               
+                               list(trt=N,  fact1=M1
+                               ),
+                               
+                               list(trt=M,  fact1=M1 
+                               ), 
+                               conf.int=.95)
+            
+            
+            # lets get the interaction p-value
+            x <- anova(A, india=FALSE )
+            pv <- x[grep("* fact1", rownames(x)),"P"]
+            pvalue <- x[grep("* fact1", rownames(x)),]
+            M=M;N=N;M1=M1;N1=N1;v=v;
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+        } else if (v %in% "age") {
+            
+            
+            k1 <- rms::contrast(A,
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=c(M1,N1), covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                     covar2=v6., binary2=v8., sex=v9., bmi=v10.,
+                                     trt=N),
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=c(M1,N1), covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                     covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
+                                     trt=M) 
+            )
+            
+            
+            double <- contrast(A, 
+                               list(trt=N,  age=N1
+                               ),
+                               
+                               list(trt=M,  age=N1 
+                               ),
+                               
+                               list(trt=N,  age=M1
+                               ),
+                               
+                               list(trt=M,  age=M1 
+                               ), 
+                               conf.int=.95)
+            
+            
+            # lets get the interaction p-value
+            x <- anova(A, india=FALSE )
+            pv <- x[grep("* age", rownames(x)),"P"]
+            pvalue <- x[grep("* age", rownames(x)),]
+            M=M;N=N;M1=M1;N1=N1;v=v;
+            
+            
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+        }   else if (v %in% "bmi") {
+            
+            k1 <- rms::contrast(A,
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                     covar2=v6., binary2=v8., sex=v9., bmi=c(M1,N1),
+                                     trt=N),
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                     covar2=v6.,  binary2=v8., sex=v9., bmi=c(M1,N1),
+                                     trt=M) 
+            )
+            
+            
+            double <- contrast(A, 
+                               list(trt=N,  bmi=N1
+                               ),
+                               
+                               list(trt=M,  bmi=N1 
+                               ),
+                               
+                               list(trt=N,  bmi=M1
+                               ),
+                               
+                               list(trt=M,  bmi=M1 
+                               ), 
+                               conf.int=.95)
+            
+            
+            # lets get the interaction p-value
+            x <- anova(A, india=FALSE )
+            pv <- x[grep("* bmi", rownames(x)),"P"]
+            pvalue <- x[grep("* bmi", rownames(x)),]
+            M=M;N=N;M1=M1;N1=N1;v=v;
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+        } else if (v %in% "covar3") {
+            
+            
+            k1 <- rms::contrast(A,
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=c(M1,N1), covar1=v3., vas=v4., time=v5.,
+                                     covar2=v6., binary2=v8., sex=v9., bmi=v10.,
+                                     trt=N),
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=c(M1,N1), covar1=v3., vas=v4., time=v5.,
+                                     covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
+                                     trt=M) 
+            )
+            
+            
+            double <- contrast(A, 
+                               list(trt=N,  covar3=N1
+                               ),
+                               
+                               list(trt=M,  covar3=N1 
+                               ),
+                               
+                               list(trt=N,  covar3=M1
+                               ),
+                               
+                               list(trt=M,  covar3=M1 
+                               ), 
+                               conf.int=.95)
+            
+            
+            # lets get the interaction p-value
+            x <- anova(A, india=FALSE )
+            pv <- x[grep("* covar3", rownames(x)),"P"]
+            pvalue <- x[grep("* covar3", rownames(x)),]
+            
+            M=M;N=N;M1=M1;N1=N1;v=v;
+            
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+        } else if (v %in% "covar1") {
+            
+            
+            k1 <- rms::contrast(A,
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar1=c(M1,N1), covar3=v2., vas=v4., time=v5.,
+                                     covar2=v6., binary2=v8., sex=v9., bmi=v10.,
+                                     trt=N),
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar1=c(M1,N1), covar3=v2., vas=v4., time=v5.,
+                                     covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
+                                     trt=M) 
+            )
+            
+            
+            double <- contrast(A, 
+                               list(trt=N,  covar1=N1
+                               ),
+                               
+                               list(trt=M,  covar1=N1 
+                               ),
+                               
+                               list(trt=N,  covar1=M1
+                               ),
+                               
+                               list(trt=M,  covar1=M1 
+                               ), 
+                               conf.int=.95)
+            
+            
+            # lets get the interaction p-value
+            x <- anova(A, india=FALSE )
+            pv <- x[grep("* covar1", rownames(x)),"P"]
+            pvalue <- x[grep("* covar1", rownames(x)),]
+            M=M;N=N;M1=M1;N1=N1;v=v;
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+        } else if (v %in% "vas") {
+            
+            
+            k1 <- rms::contrast(A,
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=c(M1,N1), time=v5.,
+                                     covar2=v6., binary2=v8., sex=v9., bmi=v10.,
+                                     trt=N),
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=c(M1,N1), time=v5.,
+                                     covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
+                                     trt=M) 
+            )
+            
+            double <- contrast(A, 
+                               list(trt=N,  vas=N1
+                               ),
+                               
+                               list(trt=M,  vas=N1 
+                               ),
+                               
+                               list(trt=N,  vas=M1
+                               ),
+                               
+                               list(trt=M,  vas=M1 
+                               ), 
+                               conf.int=.95)
+            
+            
+            # lets get the interaction p-value
+            x <- anova(A, india=FALSE )
+            pv <- x[grep("* vas", rownames(x)),"P"]
+            pvalue <- x[grep("* vas", rownames(x)),]
+            M=M;N=N;M1=M1;N1=N1;v=v;
+            
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        } else if (v %in% "covar2") {
+            
+            
+            
+            k1 <- rms::contrast(A,
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                     covar2=c(M1,N1), binary2=v8., sex=v9., bmi=v10.,
+                                     trt=N),
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                     covar2=c(M1,N1),  binary2=v8., sex=v9., bmi=v10.,
+                                     trt=M) 
+            )
+            
+            double <- contrast(A, 
+                               list(trt=N,  covar2=N1
+                               ),
+                               
+                               list(trt=M,  covar2=N1 
+                               ),
+                               
+                               list(trt=N,  covar2=M1
+                               ),
+                               
+                               list(trt=M,  covar2=M1 
+                               ), 
+                               conf.int=.95)
+            
+            
+            # lets get the interaction p-value
+            x <- anova(A, india=FALSE )
+            pv <- x[grep("* covar2", rownames(x)),"P"]
+            
+            pvalue <- x[grep("* covar2", rownames(x)),]
+            M=M;N=N;M1=M1;N1=N1;v=v;
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+        } else if (v %in% "time") {
+            
+            
+            
+            k1 <- rms::contrast(A,
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=c(M1,N1),
+                                     covar2=v6., binary2=v8., sex=v9., bmi=v10.,
+                                     trt=N),
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=c(M1,N1),
+                                     covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
+                                     trt=M) 
+            )
+            
+            
+            
+            double <- contrast(A, 
+                               list(trt=N,  time=N1
+                               ),
+                               
+                               list(trt=M,  time=N1 
+                               ),
+                               
+                               list(trt=N,  time=M1
+                               ),
+                               
+                               list(trt=M,  time=M1 
+                               ), 
+                               conf.int=.95)
+            
+            
+            # lets get the interaction p-value
+            x <- anova(A, india=FALSE )
+            pv <- x[grep("* time", rownames(x)),"P"]
+            pvalue <- x[grep("* time", rownames(x)),]
+            M=M;N=N;M1=M1;N1=N1;v=v;
+            
+            
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+        }   else if (v %in% "sex") {
+            
+            
+            k1 <- rms::contrast(A,
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                     covar2=v6., binary2=v8., sex=c(M1,N1), bmi=v10.,
+                                     trt=N),
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                     covar2=v6.,  binary2=v8., sex=c(M1,N1), bmi=v10.,
+                                     trt=M) 
+            )
+            
+            
+            
+            double <- contrast(A, 
+                               list(trt=N,  sex=N1
+                               ),
+                               
+                               list(trt=M,  sex=N1 
+                               ),
+                               
+                               list(trt=N,  sex=M1
+                               ),
+                               
+                               list(trt=M,  sex=M1 
+                               ), 
+                               conf.int=.95)
+            
+            
+            # lets get the interaction p-value
+            x <- anova(A, india=FALSE )
+            pv <- x[grep("* sex", rownames(x)),"P"]
+            pvalue <- x[grep("* sex", rownames(x)),]
+            M=M;N=N;M1=M1;N1=N1;v=v;
+            
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+        }   else if (v %in% "binary2") {
+            
+            
+            k1 <- rms::contrast(A,
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                     covar2=v6., binary2=c(M1,N1), sex=v9., bmi=v10.,
+                                     trt=N),
+                                
+                                list(fact1=v10.,
+                                     smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+                                     covar2=v6.,  binary2=c(M1,N1), sex=v9., bmi=v10.,
+                                     trt=M) 
+            )
+            
+            double <- contrast(A, 
+                               list(trt=N,  binary2=N1
+                               ),
+                               
+                               list(trt=M,  binary2=N1 
+                               ),
+                               
+                               list(trt=N,  binary2=M1
+                               ),
+                               
+                               list(trt=M,  binary2=M1 
+                               ), 
+                               conf.int=.95)
+            
+            
+            # lets get the interaction p-value
+            x <- anova(A, india=FALSE )
+            pv <- x[grep("* binary2", rownames(x)),"P"]
+            pvalue <- x[grep("* binary2", rownames(x)),]
+            M=M;N=N;M1=M1;N1=N1;v=v;
+            
+        }
+        
+        
+        
+        
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        return(list(k1=k1, double=double, pv=pv, pvalue=pvalue, M=M, N=N, M1=M1, N1=N1,v=v))
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+    })
+     
+    # output$DD3 <- renderPrint({
+    #     return( print(doubleDx()$k1, digits=4))
+    # }) 
+    # output$DD4 <- renderPrint({
+    #     return( print(doubleDx()$double, digits=4))
+    # }) 
+    # output$DD5 <- renderPrint({
+    #     return( print(doubleDx()$pv, digits=4))
+    # }) 
+    # output$DD6 <- renderPrint({
+    #     return( print(doubleDx()$pvalue, digits=4))
+    # }) 
+    # 
+    # output$DD7 <- renderPrint({
+    #     return( print(doubleDx()$M, digits=4))
+    # }) 
+    # output$DD8 <- renderPrint({
+    #     return( print(doubleDx()$N, digits=4))
+    # }) 
+    # 
+    # output$DD9 <- renderPrint({
+    #     return( print(doubleDx()$M1, digits=4))
+    # }) 
+    # output$DD10 <- renderPrint({
+    #     return( print(doubleDx()$N1, digits=4))
+    # }) 
+    # 
+    # output$DD11 <- renderPrint({
+    #     return( print(doubleDx()$v, digits=4))
+    # }) 
+    # 
+    # 
+    # 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
