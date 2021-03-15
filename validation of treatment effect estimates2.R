@@ -828,7 +828,7 @@ i.plot <- function(
 #
 #if (exp(res$double$Contrast) < 1 & (res$M1 > res$N1 )) {
   
-  if   ((res$M1 > res$N1 ) | (  exp(res$double$Contrast) < 1     ) )    { 
+##  if   ((res$M1 > res$N1 ) | (  exp(res$double$Contrast) < 1     ) )    { 
     
   
    #if( diff(res$k1$Contrast)>0  ) {
@@ -847,18 +847,20 @@ i.plot <- function(
     colour = "#EC7014" # Also accepts "red", "blue' etc
   ) 
   
-  } else {
+##  } else {
   
-  i <- gg  + geom_segment(
-    xend = 1.5, yend =  Scorex[1],
-    x = 1.5, y =  Scorex[2],
-    lineend = "round", # See available arrow types in example above
-    linejoin = "round",
-    size = .5, 
-    arrow = arrow(length = unit(0.2, "cm")),
-    colour = "#EC7014" # Also accepts "red", "blue' etc
-  )   
- }
+  # i <- gg  + geom_segment(
+  #   xend = 1.5, yend =  Scorex[1],
+  #   x = 1.5, y =  Scorex[2],
+  #   lineend = "round", # See available arrow types in example above
+  #   linejoin = "round",
+  #   size = .5, 
+  #   arrow = arrow(length = unit(0.2, "cm")),
+  #   colour = "#EC7014" # Also accepts "red", "blue' etc
+  # )   
+  
+  
+ ##}
   
   # now add text , we exponentiate the dif of the log odds ratios and show the interaction form both points of view
   
