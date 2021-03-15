@@ -1,4 +1,4 @@
-
+# add this to the app
 # plotting interactions alot of code.
 # we have defaulted to truth as no interaction 
 # need to add adjusted for information to graph.
@@ -710,7 +710,7 @@ statz <- function( v="fact1", M=1,  N=2,   M1=0 , N1=1)  {
   
 }
   return(list(k1=k1, double=double, pv=pv, pvalue=pvalue, M=M, N=N, M1=M1, N1=N1,v=v))
-  
+  print(k1)
 }
   
 # end function 
@@ -762,8 +762,17 @@ i.plot <- function(
   v2 <- as.character(MASS::fractions(v)) # labels for axis, mix of fractions and numeric
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  df.plot$factor. = factor(df.plot$factor., levels = c(res$M1,res$N1 ))
+   # get the y axis the same whether 0,1 1,0 ... good idea?
+   if (res$M1 < res$N1) {
   
+   df.plot$factor. = factor(df.plot$factor., levels = c(res$M1,res$N1 ))
+
+   } else {
+     
+     df.plot$factor. = factor(df.plot$factor., levels = c(res$N1,res$M1 ))
+     
+     
+   }
   
     # capture interaction effect to present on graph
  # interaction. <- max(Scorex[2],Scorex[1]) -  min(Scorex[2],Scorex[1])  # difference on log odds scale, could use abs(diff(Scorex))
@@ -816,12 +825,21 @@ i.plot <- function(
   #     plot.subtitle = element_text(color = "blue"),
   #     plot.caption = element_text(color = "green", face = "italic")
   # )
+#
+#if (exp(res$double$Contrast) < 1 & (res$M1 > res$N1 )) {
   
+  if   ((res$M1 > res$N1 ) | (  exp(res$double$Contrast) < 1     ) )    { 
+    
+  
+   #if( diff(res$k1$Contrast)>0  ) {
+     
+  #   if( diff(log(df.plot$Score))<0  ) {
+    
   # Add arrows
   
   i <- gg + geom_segment(
-    x = 1.5, y =  Scorex[1],
-    xend = 1.5, yend =  Scorex[2],
+    x = 1.5, y =  Scorex[1],  #y start of arrow
+    xend = 1.5, yend =  Scorex[2],  # end of arrow yend 
     lineend = "round", # See available arrow types in example above
     linejoin = "round",
     size = .5, 
@@ -829,9 +847,9 @@ i.plot <- function(
     colour = "#EC7014" # Also accepts "red", "blue' etc
   ) 
   
-  # double headed arrow   
+  } else {
   
-  j <-  i  + geom_segment(
+  i <- gg  + geom_segment(
     xend = 1.5, yend =  Scorex[1],
     x = 1.5, y =  Scorex[2],
     lineend = "round", # See available arrow types in example above
@@ -840,13 +858,13 @@ i.plot <- function(
     arrow = arrow(length = unit(0.2, "cm")),
     colour = "#EC7014" # Also accepts "red", "blue' etc
   )   
-  
+ }
   
   # now add text , we exponentiate the dif of the log odds ratios and show the interaction form both points of view
   
-  k <- j + geom_text( aes(
+  k <- i + geom_text( aes(
     x = 1.4, #y = (Scorex[1]+Scorex[2])/2,
-    y=log(40),
+    y=log(75),
     label = paste0("Interaction multiplication factor:\n ",p3(exp(res$double$Contrast)),", 95%CI (" ,p3(exp(res$double$Lower)),", ",p3(exp(res$double$Upper)), ")"), 
     group = NULL,
     vjust = -1, #.3
@@ -855,17 +873,29 @@ i.plot <- function(
   
 }
 
-res <- statz(v="fact1", M= 1,  N=2,   M1 =0 ,  N1 = 1)  
-res <- statz(v="age",   M= 1,  N=2,   M1 =10 , N1 = 20)  
-res <- statz(v="age",   M= 1,  N=3,   M1 =10 , N1 = 20)  
+# trouble shooting
+  res1 =statz(v="fact1",     M= 1,  N=2,   M1 =1 ,  N1 = 0)   
+  res2 =statz(v="fact1",     M= 1,  N=2,   M1 =0 ,  N1 = 1)  
+  res3 =statz(v="fact1",     M= 2,  N=1,   M1 =1 ,  N1 = 0)  
+  res4 =statz(v="fact1",     M= 2,  N=1,   M1 =0 ,  N1 = 1)   
+ 
+(z <- i.plot(  res =statz(v="fact1",     M= 1,  N=2,   M1 =1 ,  N1 = 0)  ))  #g  <1 L 
+(z <- i.plot(  res =statz(v="fact1",     M= 1,  N=2,   M1 =0 ,  N1 = 1)  ))  #   >1 L 
 
-(z <- i.plot(  res =statz(v="fact1",     M= 1,  N=2,   M1 =1 ,  N1 = 0)  ))
+(z <- i.plot(  res =statz(v="fact1",     M= 2,  N=1,   M1 =1 ,  N1 = 0)  ))  #g >1 R
+(z <- i.plot(  res =statz(v="fact1",     M= 2,  N=1,   M1 =0 ,  N1 = 1)  ))  #g  <1 L
 
-(z <- i.plot(  res =statz(v="fact1",     M= 1,  N=2,   M1 =0 ,  N1 = 1)  ))
+
+
+(z <- i.plot(  res =statz(v="fact1",     M= 2,  N=3,   M1 =0 ,  N1 = 1)  ))
+
 (z <- i.plot(  res =statz(v="fact1",     M= 1,  N=3,   M1 =0 ,  N1 = 1)  ))
 (z <- i.plot(res <- statz(v="age",       M= 1,  N=3,   M1 =10 , N1 = 15)  ))
+
+res <- statz(v="smoking",   M= 3,  N=1,   M1 =1 ,  N1 = 2) 
 (z <- i.plot(res <- statz(v="smoking",   M= 3,  N=1,   M1 =1 ,  N1 = 2)  ))
 
 (z <- i.plot(res <- statz(v="sex",   M= 1,  N=3,   M1 =0 ,  N1 = 1)  ))
+(z <- i.plot(res <- statz(v="vas",   M= 1,  N=3,   M1 =5 ,  N1 = 10)  ))
 
  
