@@ -157,9 +157,9 @@ i.plot <- function( v , M,  N,   M1,  N1, k1, pv, double) {
     
     # Add arrows
     i <- gg + geom_segment(
-        x = 1.5, y =  Scorex[1],  #y start of arrow
+        x = 1.5, y =  Scorex[1],        # y start of arrow
         xend = 1.5, yend =  Scorex[2],  # end of arrow yend 
-        lineend = "round", # See available arrow types in example above
+        lineend = "round",              # more available arrow types 
         linejoin = "round",
         size = .5, 
         arrow = arrow(length = unit(0.2, "cm")),
@@ -504,10 +504,7 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                textInput("adj.employed", div(h5(tags$span(style="color:blue", "binary2 ref (Employed)"))), value= "0"),
                                                textInput("adj.sex", div(h5(tags$span(style="color:blue", "Sex red (binary)"))), value= "0"),
                                                textInput("adj.BMI", div(h5(tags$span(style="color:blue", "BMI ref (factor)"))), value= "1")
-                                               # textInput("adj.employed", div(h5(tags$span(style="color:blue", "binary2 ref (Employed)"))), value= "0"),
-                                               # textInput("adj.sex", div(h5(tags$span(style="color:blue", "Sex red (binary)"))), value= "0"),
-                                               # textInput("adj.BMI", div(h5(tags$span(style="color:blue", "BMI ref (factor)"))), value= "1")
-                                               #textInput("adj.trt", div(h5(tags$span(style="color:blue", "Treatment ref"))), value= "1"),
+                                             
                                                
                                            ),
                                            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -582,26 +579,7 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                            fluidRow(
                                                column(12,
-                                                      
-                                                      # sliderTextInput("Varsx",
-                                                      #                 div(h5(tags$span(style="color:blue", "Select the predictor of interest "))), 
-                                                      #                 choices = c("smoking", "age", "bmi", "covar3", "covar1", "vas", "time", 
-                                                      #                             "covar2", "fact1", "sex","binary2"), #add further months 
-                                                      #                 selected = c("smoking"), #values which will be selected by default
-                                                      #                 animate = FALSE, grid = FALSE, 
-                                                      #                 hide_min_max = FALSE, from_fixed = FALSE,
-                                                      #                 to_fixed = FALSE, from_min = NULL, from_max = NULL, to_min = NULL,
-                                                      #                 to_max = NULL, force_edges = FALSE, width = NULL, pre = NULL,
-                                                      #                 post = NULL, dragRange = TRUE),
-                                                      # 
-                                                      
-                                                      
-                                                      # textInput('tlevz', 
-                                                      #           strong(div(h5(tags$span(style="color:blue", "Treatment levels to compare")))), "1,2"),
-                                                      # textInput('ilevz', 
-                                                      #           strong(div(h5(tags$span(style="color:blue", "Factor levels to compare")))), "0,1"),
-                                                      
-                                                      
+                                             
                                                       
                                                       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                                       
@@ -648,16 +626,7 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                                      
                                                                      div( verbatimTextOutput("int.trtc" ) ), 
                                                                      div( verbatimTextOutput("int.trtd" ) ), 
-                                                                    # column(4, 
-                                                                         #   div( verbatimTextOutput("Ax1" ) )),
-                                                                     
-                                                                     #column(4,
-                                                                          #  div( verbatimTextOutput("Ax2" ) )
-                                                                     #),
-                                                                     
-                                                                     #column(4,
-                                                                           # div( verbatimTextOutput("Ax3" ) )
-                                                                     #),
+                                                               
                                                                      
                                                                  )
                                                           )#,
@@ -739,10 +708,6 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                       
                                                ),
                                                column(width = 3, offset = 0, style='padding:1px;',
-                                                      #div(h4("References:")),  
-                                                      # is to display the Wald χ2 statistic minus its degrees of freedom for assessing the partial effect of each variable. 
-                                                      # Even though this is not scaled [0,1] it is 
-                                                      # probably the best method in general because it penalizes a variable requiring a large number of parameters to achieve the
                                                       h4("Figure 4 Relative importance"),
                                                       div(plotOutput("anovaf", width=fig.height1, height=fig.height9)),
                                                ),
@@ -761,9 +726,7 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                            this is the double difference, we can check it matches the interaction term in tab 5. This default will match the trt=2 * smoking=2 interaction.
                                         Basically we are pulling out the interaction terms. For the continuous variables, the range will make no difference to the p-value as the effects are modelled as truly linear.
                                                     For the binary variables enter 0 and 1 only.")),
-                                           # h4(htmlOutput("textWithNumber99",) ),
-                                           # textInput('preds', 
-                                           #          div(h5(tags$span(style="color:blue", "predictor of interest"))), "smoking"),
+                                           
                                            
                                            sliderTextInput("Vars",
                                                            div(h5(tags$span(style="color:blue", "Select the predictor of interest "))), 
@@ -797,11 +760,7 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                
                                            ),
                                            
-                                           splitLayout(
-                                               # textInput("interest.level1", div(h5(tags$span(style="color:blue", "Smoking level"))), value= "1"),
-                                               # textInput("interest.level2", div(h5(tags$span(style="color:blue", "smoking level"))), value= "2")
-                                               
-                                           ),
+
                                            
                                            
                                            br(), br(),
@@ -818,15 +777,7 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                                      column(6, 
                                                                             div( verbatimTextOutput("DD1" ) )),
                                                                      
-                                                                     #h4(paste("Treatment effect averaged over the two levels of interest. For categorical levels 
-                                                                     #        this is the frequency-weighted overall treatment effect in these two groups, 
-                                                                     #       which is similar to dropping the interaction from the model.")), 
                                                                      
-                                                                     #column(6,
-                                                                     #   div( verbatimTextOutput("DD2" ) )),
-                                                                     # 
-                                                                     # column(4,
-                                                                     #        div( verbatimTextOutput("int.trt3" ) )),
                                                                      
                                                                  )
                                                           )#,
@@ -836,48 +787,7 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                )
                                            ),
                                            
-                                           
-                                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                           
-                                           # h4(paste("Examples describing the regression coefficients. For continuous
-                                           #          variables we estimate the effect based on the 25th and 75th percentile of the variables distribution.")),
-                                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                           
-                                           
-                                           
-                                           
-                                           #  h4(paste("Table 15. Model treatment interacting with all baseline covariates")), 
-                                           #  div( verbatimTextOutput("Ax") )
-                                           
-                                           # fluidRow(
-                                           #     column(12,
-                                           #            #  div( verbatimTextOutput("int.trt1" ) ),
-                                           #            fluidRow(
-                                           #                column(12,
-                                           #                       #  div( verbatimTextOutput("int.trt2" ) ),
-                                           #                       fluidRow(
-                                           #                          # h4(paste("Table 15. Model treatment interacting with all baseline covariates, using trt refernce levels 1,2,3")),  
-                                           #                           column(6, 
-                                           #                                  div( verbatimTextOutput("DD5" ) )),
-                                           #                           
-                                           #                           column(6,
-                                           #                                  div( verbatimTextOutput("DD6" ) )),
-                                           #                           # ),
-                                           #                           # 
-                                           #                           # column(4,
-                                           #                           #        div( verbatimTextOutput("Ax3" ) )
-                                           #                           # ),
-                                           #                           
-                                           #                       )
-                                           #                )#,
-                                           #                #column(width = 6,
-                                           #                # "Fluid 6")
-                                           #            )
-                                           #     )
-                                           # ),
-                                           #  
-                                           #  
-                                           
+                               
                                            
                                            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                   ),
@@ -931,16 +841,7 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                   ),
                                   
                                   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
+                             
                                   tabPanel("12 Data & diagnostics", 
                                            
                                            fluidRow(
@@ -1076,16 +977,7 @@ server <- shinyServer(function(input, output   ) {
         fact1    <- sample(0:1,  n, replace=TRUE)
         binary2  <- sample(0:1,  n, replace=TRUE)
         sex      <- sample(0:1,  n, replace=TRUE)
-        
-        # get means of continuous vars for presentation of forest plot
-        # mage   <-   mean(age)
-        # mcovar3 <-   mean(covar3)
-        # mcovar1 <- mean(covar1)
-        # mvas  <- mean(vas)
-        # mtime <- mean(time)
-        # mcovar2   <- getmode(covar2)
-        
-        
+
         return(list(    
             
             trt.coef       =trt.coef ,
@@ -1113,15 +1005,6 @@ server <- shinyServer(function(input, output   ) {
             fact1=fact1 , 
             binary2=binary2, 
             sex=sex,
-            
-            #not used
-            # mage   <-   mage,
-            # mcovar3 <-  mcovar3,
-            # mcovar1 <- mcovar1,
-            # mvas  <- mvas,
-            # mtime <- mtime,
-            # mcovar2   <- mcovar2,
-            
             
             randomi=randomi))
         
@@ -1298,8 +1181,7 @@ server <- shinyServer(function(input, output   ) {
     })  
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    
+
     output$user <- renderPrint({
         return(print(analysis()$f, digits=3))
     }) 
@@ -1329,9 +1211,7 @@ server <- shinyServer(function(input, output   ) {
     })
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    
-    
+
     contrastz<- reactive({
         
         X <- analysis() 
@@ -1533,8 +1413,7 @@ server <- shinyServer(function(input, output   ) {
             
         }
         ############################
-        
-        
+
         if ( p2(x2[2,4])  > 1) { 
             
             txt2.2  <- paste0( " on treatment 2  while being identical in all other predictors is ",p2(x2[2,4])," with  95%CI (",p2(x2[2,6]),", ",p2(x2[2,7]),"). 
@@ -1553,8 +1432,7 @@ server <- shinyServer(function(input, output   ) {
                       since the odds are reduced by a factor of ",p2(x2[2,4]),"")
             
         }
-        
-        
+
         ###########################
         
         if ( p2(x3[2,4])  > 1) { 
@@ -1576,10 +1454,8 @@ server <- shinyServer(function(input, output   ) {
             
         }
         
-        
         ###second example
-        
-        
+
         txt1x   <- paste0("For ",rownames(x)[3]  , " the average change in odds of the outcome comparing patients with measurement ",x[4,1]," to patients with measurement ",x[4,2] )
         
         ##treatment 1
@@ -1603,7 +1479,6 @@ server <- shinyServer(function(input, output   ) {
         }
         ############################
         
-        
         if ( p2(x2[4,4])  > 1) { 
             
             txt2.2x  <- paste0( " on treatment 2  while being identical in all other predictors is ",p2(x2[4,4])," with  95%CI (",p2(x2[4,6]),", ",p2(x2[4,7]),"). 
@@ -1621,9 +1496,7 @@ server <- shinyServer(function(input, output   ) {
             txt3.2x <- paste0( "We can also express the decrease by saying that the odds are decreased by approximately ",p0 (abs(x[4,4]-1)*100),"%,
                       since the odds are reduced by a factor of ",p2(x[4,4]),".")
             
-            
         }
-        
         
         ###########################
         
@@ -1645,9 +1518,7 @@ server <- shinyServer(function(input, output   ) {
                       since the odds are reduced by a factor of ",p2(x3[4,4]),".")
             
         }
-        
-        
-        
+
         #######################
         HTML(paste0(
             br(), txt1, txt2.1 , txt3.1 ,
@@ -1662,8 +1533,6 @@ server <- shinyServer(function(input, output   ) {
             br(), txt1x, txt2.2x , txt3.2x ,
             br(), 
             br(), txt1x, txt2.3x , txt3.3x 
-            
-            
             
         ) )
         
@@ -1735,8 +1604,7 @@ server <- shinyServer(function(input, output   ) {
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # FULL INTERACTION MODEL
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    
+
     zummary<- reactive({
         
         X <- analysis() 
@@ -1769,9 +1637,7 @@ server <- shinyServer(function(input, output   ) {
         ##add in means of continuous vars here
         
         d <- design()
- 
-         
-        
+
         A1 <- summary(X$A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                       covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
                       trt=1, est.all=FALSE, vnames=c( "labels"))
@@ -1791,10 +1657,7 @@ server <- shinyServer(function(input, output   ) {
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
     })
-    
-    
-  
-    
+
     output$int.trt1 <- renderPrint({
         return(print(zummary()$A1))
     }) 
@@ -1805,12 +1668,10 @@ server <- shinyServer(function(input, output   ) {
         return(print(zummary()$A3))
     }) 
     
-    
     #~~~~~~~~~~~~~~~~~~~new march21~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # is this needed?
     
-    
-    
-    zummaryx<- reactive({
+  zummaryx<- reactive({
         
         X <- analysis() 
         
@@ -1838,14 +1699,15 @@ server <- shinyServer(function(input, output   ) {
         v9. <- (as.numeric(    eval(parse(text= (input$adj.sex       )) ) ))
         v10. <-(as.numeric(    eval(parse(text= (input$adj.BMI       )) ) ))
          
-        
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return(list(    k1=k1)) 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
     })
     
-    # new march21~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # new march21~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # pull in stats, contrast and double differences and fed into a plot function
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     output$plot.trtc <- renderPlot({   
 
         X <- analysis() 
@@ -1880,11 +1742,7 @@ server <- shinyServer(function(input, output   ) {
         return(print(double , X=TRUE, fun=exp, digits=6)) #*
     }) 
     ## end new march21~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   
-    
-    
-    
-    
+  
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # SMOKING TRT INTERACTION MODEL
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1943,7 +1801,6 @@ server <- shinyServer(function(input, output   ) {
         X <- analysis() 
         
         A <- X$A
-        
         
         v0. <- as.numeric(    eval(parse(text= (input$adj.smoking)) ) )
         v1. <- as.numeric(    eval(parse(text= (input$adj.age)) ) )
@@ -2166,8 +2023,7 @@ server <- shinyServer(function(input, output   ) {
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~double differences~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~see harrell ref
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~double differences~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~see harrell ref
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~double differences~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~see harrell ref
-    #varz <-  c(  "smoking", "age", "bmi", "covar3", "covar1", "vas", "time", 
-    #            "covar2", "fact1", "binary2")
+    
     
     doubleD <- reactive({
         
@@ -2363,24 +2219,15 @@ server <- shinyServer(function(input, output   ) {
             pooled <- contrast(A,    list(trt=L1,  fact1=c(I1,I2)),
                                list(trt=L2,  fact1=c(I1,I2)),
                                type='average', weights=w)
-            
-            
-            
+
         }
-        
-        
-        
+      
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return(list(    double=double, pooled=pooled )) 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
     })
-    
-    
-    # varz <-  c(  "smoking", "age", "bmi", "covar3", "covar1", "vas", "time", 
-    #              "covar2", "fact1", "binary2")
-    # 
     
     output$DD1 <- renderPrint({
         options(digits=6)
@@ -2392,7 +2239,8 @@ server <- shinyServer(function(input, output   ) {
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # new
+    # new function to create contrasts for interactions and double differences as well as 
+    # extract the chunk interaction pvalue
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
@@ -2884,38 +2732,6 @@ server <- shinyServer(function(input, output   ) {
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
     })
-     
-    # output$DD3 <- renderPrint({
-    #     return( print(doubleDx()$k1, digits=4))
-    # }) 
-    # output$DD4 <- renderPrint({
-    #     return( print(doubleDx()$double, digits=4))
-    # }) 
-    # output$DD5 <- renderPrint({
-    #     return( print(doubleDx()$pv, digits=4))
-    # }) 
-    # output$DD6 <- renderPrint({
-    #     return( print(doubleDx()$pvalue, digits=4))
-    # }) 
-    # 
-    # output$DD7 <- renderPrint({
-    #     return( print(doubleDx()$M, digits=4))
-    # }) 
-    # output$DD8 <- renderPrint({
-    #     return( print(doubleDx()$N, digits=4))
-    # }) 
-    # 
-    # output$DD9 <- renderPrint({
-    #     return( print(doubleDx()$M1, digits=4))
-    # }) 
-    # output$DD10 <- renderPrint({
-    #     return( print(doubleDx()$N1, digits=4))
-    # }) 
-    # 
-    # output$DD11 <- renderPrint({
-    #     return( print(doubleDx()$v, digits=4))
-    # }) 
-    # 
 
     
 })
