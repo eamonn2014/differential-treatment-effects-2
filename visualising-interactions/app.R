@@ -647,6 +647,7 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                                      
                                                                      
                                                                      div( verbatimTextOutput("int.trtc" ) ), 
+                                                                     div( verbatimTextOutput("int.trtd" ) ), 
                                                                     # column(4, 
                                                                          #   div( verbatimTextOutput("Ax1" ) )),
                                                                      
@@ -1824,19 +1825,7 @@ server <- shinyServer(function(input, output   ) {
         v8. <- (as.numeric(    eval(parse(text= (input$adj.employed  )) ) ))
         v9. <- (as.numeric(    eval(parse(text= (input$adj.sex       )) ) ))
         v10. <-(as.numeric(    eval(parse(text= (input$adj.BMI       )) ) ))
-        
-        
-        ##add in means of continuous vars here
-        
-       # d <- design()
-   
-      #  p1x <- i.plot(  v=v,  M= M,  N=N,   M1 =M1 ,  N1 = N1)  
-        
-        
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        
-       # z1 <- print(k1, X=TRUE, fun=exp)  # exponentiate...not used here, but see * below
-        
+         
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return(list(    k1=k1)) 
@@ -1869,6 +1858,12 @@ server <- shinyServer(function(input, output   ) {
     output$int.trtc <- renderPrint({
         k1 <- zummaryx()$k1
         return(print(k1, X=TRUE, fun=exp, digits=6)) #*
+    }) 
+    output$int.trtd <- renderPrint({
+        X <- analysis() 
+        d <- doubleDx()
+        double =d$double
+        return(print(double, digits=6)) #*
     }) 
     ## end new march21~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    
