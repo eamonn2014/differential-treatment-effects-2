@@ -61,7 +61,7 @@ getmode <- function(v) {
 #### now let us write a plot function to present interactions
 ###########################################################
 
-i.plot <- function( v , M,  N,   M1,  N1) {
+i.plot <- function( v , M,  N,   M1,  N1, k1, pv, double) {
     
     # v is the factor of interest
     # M treatment level
@@ -70,18 +70,18 @@ i.plot <- function( v , M,  N,   M1,  N1) {
     # N1 factor level
     
     # original stats are on log scale
-    zz <- res$k1
+    zz <- k1
     Scorex=as.vector(zz$Contrast)
     lbx =  as.vector(zz$Lower)
     ubx =  as.vector(zz$Upper)
     
-    M=res$M
-    N=res$N
-    vx=res$v
-    effect = names(res$k1)[1]
+    #M=M
+    #N=N
+    vx=v
+    effect = names(k1)[1]
     
     # create a data set where we exponentiate the stats
-    df.plot <- data.frame(factor.=c(res$M1,res$N1 ),
+    df.plot <- data.frame(factor.=c(M1,N1 ),
                           x=paste0("Treatment ",N," - Treatment ",M), 
                           Score=exp(Scorex),
                           lb = exp(lbx),
@@ -97,13 +97,13 @@ i.plot <- function( v , M,  N,   M1,  N1) {
     
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # get the y axis the same whether 0,1 or 1,0 ?
-    if (res$M1 < res$N1) {
+    if (M1 < N1) {
         
-        df.plot$factor. = factor(df.plot$factor., levels = c(res$M1,res$N1 ))
+        df.plot$factor. = factor(df.plot$factor., levels = c(M1,N1 ))
         
     } else {
         
-        df.plot$factor. = factor(df.plot$factor., levels = c(res$N1,res$M1 ))
+        df.plot$factor. = factor(df.plot$factor., levels = c(N1,M1 ))
         
     }
     
@@ -111,7 +111,7 @@ i.plot <- function( v , M,  N,   M1,  N1) {
     # capture interaction effect to present on graph
     # difference on log odds scale, could use abs(diff(Scorex))
     # interaction. <- max(Scorex[2],Scorex[1]) -  min(Scorex[2],Scorex[1])  
-    interaction. <-  res$double$Contrast[[1]]
+    interaction. <-  double$Contrast[[1]]
     
     gp <- ggplot(df.plot, aes(x=factor., y=log(Score), fill="black", group=x))
     gg <- gp + #geom_line(aes(linetype=x), size=.6) + 
@@ -149,7 +149,7 @@ i.plot <- function( v , M,  N,   M1,  N1) {
             label = paste0(p3(Score),", 95%CI (" ,p3(lb),", ",p3(ub), ")"), 
             vjust=-1.0), size=5.8, color='black') +
         
-        ggtitle( paste0("Adjusted odds ratio for treatment effect (Treatment ",N," - Treatment ",M,") for ",vx,", interaction p-value ",p5(res$pv) ) )
+        ggtitle( paste0("Adjusted odds ratio for treatment effect (Treatment ",N," - Treatment ",M,") for ",vx,", interaction p-value ",p5(pv) ) )
     
     gg <- gg + labs(caption = c(paste0("The p-value tests for the necessity of the interaction printed in orange, it is the result of a hypothesis test assessing the interaction with treatment alone."))) + 
         
@@ -170,7 +170,7 @@ i.plot <- function( v , M,  N,   M1,  N1) {
     k <- i + geom_text( aes(
         x = 1.4, #y = (Scorex[1]+Scorex[2])/2,
         y=log(75),
-        label = paste0("Interaction multiplication factor:\n ",p3(exp(res$double$Contrast)),", 95%CI (" ,p3(exp(res$double$Lower)),", ",p3(exp(res$double$Upper)), ")"), 
+        label = paste0("Interaction multiplication factor:\n ",p3(exp(double$Contrast)),", 95%CI (" ,p3(exp(double$Lower)),", ",p3(exp(double$Upper)), ")"), 
         group = NULL,
         vjust = -1, #.3
         hjust = .7 #1
@@ -637,7 +637,7 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                       
                                                    
                                                       
-                                                      div( verbatimTextOutput("int.trtc" ) ), 
+                                                     # div( verbatimTextOutput("int.trtc" ) ), 
                                                       
                                                       fluidRow(
                                                           column(12, offset = 0, style='padding:1px;',
@@ -645,6 +645,8 @@ ui <- fluidPage(theme = shinytheme("journal"), #https://www.rdocumentation.org/p
                                                                  fluidRow(
                                                                      h4(paste("Interaction present if the patterns differs between factors. The interaction effect printed in orange text can be seen on the log scale in the tables 10 or 11 or 12. Further the p-value can be seen in the anova table on tab 8 and selecting the 'Treatment interacts with all variables' option.")),   
                                                                      
+                                                                     
+                                                                     div( verbatimTextOutput("int.trtc" ) ), 
                                                                     # column(4, 
                                                                          #   div( verbatimTextOutput("Ax1" ) )),
                                                                      
@@ -1826,110 +1828,42 @@ server <- shinyServer(function(input, output   ) {
         
         ##add in means of continuous vars here
         
-        d <- design()
-        
-        # v0. <-  1
-        # v1. <-  40
-        # v2. <-  1.3
-        # v3. <-  5
-        # v4. <-  17
-        # v5. <-  4
-        # v6. <-  20
-        # v7. <-  0
-        # v8. <-  0
-        # v9. <-  0
-        # v10. <- 1
-        # 
-        # A1 <- summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-        #               covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
-        #               trt=1, est.all=FALSE, vnames=c( "labels"))
-        # 
-        # 
-        # k1 <- rms::contrast(A,
-        #                     
-        #                     list(fact1=c(0,1),
-        #                          smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-        #                          covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
-        #                          trt=c(2)),
-        #                     
-        #                     list(fact1=c(0,1),
-        #                          smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-        #                          covar2=v6., binary2=v8., sex=v9., bmi=v10.,
-        #                          trt=c(1)) )
+       # d <- design()
+   
+      #  p1x <- i.plot(  v=v,  M= M,  N=N,   M1 =M1 ,  N1 = N1)  
         
         
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
-        # A1 <- summary(X$A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-        #               covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
-        #               trt=1, est.all=FALSE, vnames=c( "labels"))
-        # 
-        # A2 <- summary(X$A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-        #               covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
-        #               trt=2, est.all=FALSE, vnames=c( "labels"))
-        # 
-        # A3 <- summary(X$A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-        #               covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
-        #               trt=3, est.all=FALSE, vnames=c( "labels"))
-        # 
-        # # lets add in the means of vars in data instead
+       # z1 <- print(k1, X=TRUE, fun=exp)  # exponentiate...not used here, but see * below
         
-        # add some contrasts mar2021, comparing fact1 between treatments
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         
-        # M <- as.numeric(unlist(strsplit(input$treatment.level1x,",")))
-        # N <- as.numeric(unlist(strsplit(input$treatment.level2x,",")))
-        # 
-        # M1 <- as.numeric(unlist(strsplit(input$interest.level1x,",")))
-        # N1 <- as.numeric(unlist(strsplit(input$interest.level1x,",")))
-
-        p1x <- i.plot(  v=v,  M= M,  N=N,   M1 =M1 ,  N1 = N1)  
-        
-        
-        # k1 <- rms::contrast(X$A,
-        # 
-        #                     list(fact1=c(M1,N1),
-        #                          smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-        #                          covar2=v6., binary2=v8., sex=v9., bmi=v10.,
-        #                          trt=M),
-        # 
-        #                     list(fact1=c(M1,N1),
-        #                          smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-        #                          covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
-        #                          trt=N)
-        # )
-        # 
-        # 
-        # 
-        # 
-        # 
-        # # lets get the interaction p-value
-        # x <- anova(X$A, india=FALSE )
-        # pv <- x[grep("* fact1", rownames(x)),"P"]
-
-
-        
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        
-        z1 <- print(k1, X=TRUE, fun=exp)  # exponentiate...not used here, but see * below
-        # z1 <- print(k1, X=TRUE)             # no exponentiation
-        
-        # execute plot function
-        # p1x <- int.plot(k1, factor.="Factor of Interest",
-        #                 effect=paste0("Treatment ",M," - Treatment ",N,""), 
-        #                 first.grp=paste0("level " ,M1), 
-        #                 second.grp=paste0("level " ,N1),
-        #                                   interaction.p=pv
-        # )
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        return(list(   p1x=p1x, k1=k1)) 
+        return(list(    k1=k1)) 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
     })
     
     # new march21~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     output$plot.trtc <- renderPlot({   
-        zummaryx()$p1x
+
+        X <- analysis() 
+        
+        d <- doubleDx()
+        
+        k1     =d$k1
+        double =d$double
+        pv     =d$pv
+        pvalue =d$pvalue
+        M      =d$M
+        N      =d$N
+        M1     =d$M1
+        N1     =d$N1
+        v      =d$v
+        
+        p1x <- i.plot(  v=v,  M= M,  N=N,   M1 =M1 ,  N1 = N1, k1=k1, pv=pv, double = double)  
+        print(p1x)
+      
     })
     
     output$int.trtc <- renderPrint({
@@ -1937,63 +1871,7 @@ server <- shinyServer(function(input, output   ) {
         return(print(k1, X=TRUE, fun=exp, digits=6)) #*
     }) 
     ## end new march21~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+   
     
     
     
@@ -2516,16 +2394,25 @@ server <- shinyServer(function(input, output   ) {
         A <- X$A  # trt x all model
         da <- lp1()$datx 
         
-        
+        v0. <- (as.numeric(    eval(parse(text= (input$adj.smoking   )) ) ))
+        v1. <- (as.numeric(    eval(parse(text= (input$adj.age       )) ) ))
+        v2. <- (as.numeric(    eval(parse(text= (input$adj.biomarker )) ) ))
+        v3. <- (as.numeric(    eval(parse(text= (input$adj.blood     )) ) ))
+        v4. <- (as.numeric(    eval(parse(text= (input$adj.vas       )) ) ))
+        v5. <- (as.numeric(    eval(parse(text= (input$adj.time      )) ) ))
+        v6. <- (as.numeric(    eval(parse(text= (input$adj.fitness   )) ) ))
+        v7. <- (as.numeric(    eval(parse(text= (input$adj.history   )) ) ))
+        v8. <- (as.numeric(    eval(parse(text= (input$adj.employed  )) ) ))
+        v9. <- (as.numeric(    eval(parse(text= (input$adj.sex       )) ) ))
+        v10. <-(as.numeric(    eval(parse(text= (input$adj.BMI       )) ) ))
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         v  <- input$Varsx
-        
-        
+
         M <- as.numeric(unlist(strsplit(input$treatment.level1x,",")))
         N <- as.numeric(unlist(strsplit(input$treatment.level2x,",")))
         
         M1 <- as.numeric(unlist(strsplit(input$interest.level1x,",")))
-        N1 <- as.numeric(unlist(strsplit(input$interest.level1x,",")))
+        N1 <- as.numeric(unlist(strsplit(input$interest.level2x,",")))
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
         
@@ -2536,12 +2423,12 @@ server <- shinyServer(function(input, output   ) {
             
             k1 <- rms::contrast(A,
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=c(M1,N1), age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                                      covar2=v6., binary2=v8., sex=v9., bmi=v10.,
                                      trt=N),
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=c(M1,N1), age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                                      covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
                                      trt=M) 
@@ -2618,12 +2505,12 @@ server <- shinyServer(function(input, output   ) {
             
             k1 <- rms::contrast(A,
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=c(M1,N1), covar3=v2., covar1=v3., vas=v4., time=v5.,
                                      covar2=v6., binary2=v8., sex=v9., bmi=v10.,
                                      trt=N),
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=c(M1,N1), covar3=v2., covar1=v3., vas=v4., time=v5.,
                                      covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
                                      trt=M) 
@@ -2659,12 +2546,12 @@ server <- shinyServer(function(input, output   ) {
             
             k1 <- rms::contrast(A,
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                                      covar2=v6., binary2=v8., sex=v9., bmi=c(M1,N1),
                                      trt=N),
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                                      covar2=v6.,  binary2=v8., sex=v9., bmi=c(M1,N1),
                                      trt=M) 
@@ -2699,12 +2586,12 @@ server <- shinyServer(function(input, output   ) {
             
             k1 <- rms::contrast(A,
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=c(M1,N1), covar1=v3., vas=v4., time=v5.,
                                      covar2=v6., binary2=v8., sex=v9., bmi=v10.,
                                      trt=N),
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=c(M1,N1), covar1=v3., vas=v4., time=v5.,
                                      covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
                                      trt=M) 
@@ -2741,12 +2628,12 @@ server <- shinyServer(function(input, output   ) {
             
             k1 <- rms::contrast(A,
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar1=c(M1,N1), covar3=v2., vas=v4., time=v5.,
                                      covar2=v6., binary2=v8., sex=v9., bmi=v10.,
                                      trt=N),
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar1=c(M1,N1), covar3=v2., vas=v4., time=v5.,
                                      covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
                                      trt=M) 
@@ -2781,12 +2668,12 @@ server <- shinyServer(function(input, output   ) {
             
             k1 <- rms::contrast(A,
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=v2., covar1=v3., vas=c(M1,N1), time=v5.,
                                      covar2=v6., binary2=v8., sex=v9., bmi=v10.,
                                      trt=N),
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=v2., covar1=v3., vas=c(M1,N1), time=v5.,
                                      covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
                                      trt=M) 
@@ -2821,12 +2708,12 @@ server <- shinyServer(function(input, output   ) {
             
             k1 <- rms::contrast(A,
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                                      covar2=c(M1,N1), binary2=v8., sex=v9., bmi=v10.,
                                      trt=N),
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                                      covar2=c(M1,N1),  binary2=v8., sex=v9., bmi=v10.,
                                      trt=M) 
@@ -2862,12 +2749,12 @@ server <- shinyServer(function(input, output   ) {
             
             k1 <- rms::contrast(A,
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=c(M1,N1),
                                      covar2=v6., binary2=v8., sex=v9., bmi=v10.,
                                      trt=N),
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=c(M1,N1),
                                      covar2=v6.,  binary2=v8., sex=v9., bmi=v10.,
                                      trt=M) 
@@ -2905,12 +2792,12 @@ server <- shinyServer(function(input, output   ) {
             
             k1 <- rms::contrast(A,
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                                      covar2=v6., binary2=v8., sex=c(M1,N1), bmi=v10.,
                                      trt=N),
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                                      covar2=v6.,  binary2=v8., sex=c(M1,N1), bmi=v10.,
                                      trt=M) 
@@ -2947,12 +2834,12 @@ server <- shinyServer(function(input, output   ) {
             
             k1 <- rms::contrast(A,
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                                      covar2=v6., binary2=c(M1,N1), sex=v9., bmi=v10.,
                                      trt=N),
                                 
-                                list(fact1=v10.,
+                                list(fact1=v7.,
                                      smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
                                      covar2=v6.,  binary2=c(M1,N1), sex=v9., bmi=v10.,
                                      trt=M) 
@@ -2981,9 +2868,7 @@ server <- shinyServer(function(input, output   ) {
             
         }
         
-        
-        
-        
+      
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return(list(k1=k1, double=double, pv=pv, pvalue=pvalue, M=M, N=N, M1=M1, N1=N1,v=v))
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3021,47 +2906,7 @@ server <- shinyServer(function(input, output   ) {
     #     return( print(doubleDx()$v, digits=4))
     # }) 
     # 
-    # 
-    # 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
 })
 
