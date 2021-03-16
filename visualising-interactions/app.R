@@ -1869,13 +1869,15 @@ server <- shinyServer(function(input, output   ) {
     
     output$int.trtc <- renderPrint({
         k1 <- zummaryx()$k1
+        options(digits=6) 
         return(print(k1, X=TRUE, fun=exp, digits=6)) #*
     }) 
     output$int.trtd <- renderPrint({
         X <- analysis() 
         d <- doubleDx()
         double =d$double
-        return(print(double, digits=6)) #*
+        options(digits=6) # this make sure we see the statement 95 confidence limits not 9 confidence limits
+        return(print(double , X=TRUE, fun=exp, digits=6)) #*
     }) 
     ## end new march21~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    
@@ -2381,6 +2383,7 @@ server <- shinyServer(function(input, output   ) {
     # 
     
     output$DD1 <- renderPrint({
+        options(digits=6)
         return( print(doubleD()$double, digits=4))
     }) 
     output$DD2 <- renderPrint({
