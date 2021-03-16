@@ -1753,6 +1753,18 @@ server <- shinyServer(function(input, output   ) {
         v9. <- isolate(as.numeric(    eval(parse(text= (input$adj.sex       )) ) ))
         v10. <-isolate(as.numeric(    eval(parse(text= (input$adj.BMI       )) ) ))
         
+        # allow the figure to change based on inputs
+        v0. <-  (as.numeric(    eval(parse(text= (input$adj.smoking   )) ) ))
+        v1. <-  (as.numeric(    eval(parse(text= (input$adj.age       )) ) ))
+        v2. <-  (as.numeric(    eval(parse(text= (input$adj.biomarker )) ) ))
+        v3. <-  (as.numeric(    eval(parse(text= (input$adj.blood     )) ) ))
+        v4. <-  (as.numeric(    eval(parse(text= (input$adj.vas       )) ) ))
+        v5. <-  (as.numeric(    eval(parse(text= (input$adj.time      )) ) ))
+        v6. <-  (as.numeric(    eval(parse(text= (input$adj.fitness   )) ) ))
+        v7. <-  (as.numeric(    eval(parse(text= (input$adj.history   )) ) ))
+        v8. <-  (as.numeric(    eval(parse(text= (input$adj.employed  )) ) ))
+        v9. <-  (as.numeric(    eval(parse(text= (input$adj.sex       )) ) ))
+        v10. <- (as.numeric(    eval(parse(text= (input$adj.BMI       )) ) ))
         
         ##add in means of continuous vars here
         
