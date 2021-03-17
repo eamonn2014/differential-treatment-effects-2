@@ -22,96 +22,6 @@ library(DT)
 library(survival)
 options(max.print=1000000)    
 
-
-# march21 new function to plot treatment contrasts
-
-
-
-int.plot <- function(k1, factor.="factor of interest",
-                     effect="Treatment 2 - Treatment 1", 
-                     first.grp="Absent", 
-                     second.grp="Present") {
-  
-  v <- c(1/32,1/16,1/8, 1/4,1/2,  1, 2, 4 ,8, 16,32,64, 128) 
-  
-  zz <- k1
-  # log scale
-  Scorex=as.vector(zz$Contrast)
-  lbx =  as.vector(zz$Lower)
-  ubx =  as.vector(zz$Upper)
-  
-  # create a dataset
-  df.plot <- data.frame(x=c(effect,effect),
-                        factor.=c(first.grp,second.grp ),
-                        Score=exp(Scorex),
-                        lb = exp(lbx),
-                        ub =exp(ubx))
-  
-  df.plot$factor. = factor(df.plot$factor., 
-                           levels = c(first.grp,second.grp ))
-  
-  
-  gp <- ggplot(df.plot, aes(x=factor., y=log(Score), fill="black", group=x))
-  gg <- gp + #geom_line(aes(linetype=x), size=.6) + 
-    geom_point(aes(shape=x), size=3) + 
-    geom_errorbar(aes(ymax=log(ub), ymin=log(lb)), width=.1) +
-    theme(legend.position="none") + ylab("Odds Ratio (OR > 1 better outcomes) ") + xlab(factor.) +
-    
-    geom_hline(yintercept=log(1), linetype="dashed", color = "blue") +
-    
-    scale_y_continuous(
-      breaks= log(v)  ,  
-      limits = c(log(min(v)),log(max(v))),  
-      labels=     v
-    ) +
-    
-    coord_flip() +
-    
-    geom_text(aes(   
-      y=log(40),
-      label = paste0(p3(Score),", 95%CI (" ,p3(lb),", ",p3(ub), ")"), 
-      vjust=-1.0), size=2.8, color='blue') +
-    
-    ggtitle( paste0("Adjusted Odds ratio of response for ", effect) )
-  
-  
-  gg <- gg + labs(caption = c("xxxxxxxxxxxxxx", 
-                              "xxxxxxxxxxxxxx")) + 
-    theme(plot.caption = element_text(hjust=c(1, 0)))
-  
-  # Add text and arrows
-  i <- gg + geom_segment(
-    x = 1.5, y =  Scorex[1],
-    xend = 1.5, yend =  Scorex[2],
-    lineend = "round", # See available arrow types in example above
-    linejoin = "round",
-    size = .5, 
-    arrow = arrow(length = unit(0.2, "cm")),
-    colour = "#EC7014" # Also accepts "red", "blue' etc
-  ) 
-  
-  k <- i + geom_text( aes(
-    x = 1.5, y = (Scorex[1]+Scorex[2])/2,
-    label = paste0("Adjusted odds of response ",p0(exp(   max(Scorex[2],Scorex[1]) -  min(Scorex[2],Scorex[1])  ))," x"), 
-    group = NULL,
-    vjust = -1, #.3
-    hjust = .7 #1
-  ), size=2.8 , color="#EC7014") 
-  
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # function to format 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -267,10 +177,10 @@ loglike2 <- function(x, dat, dead, indep , time) {
 # Start app
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-ui <- dashboardPage(  title="xxxx",
+ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                       # Dashboard header carrying the title of the dashboard,
                       
-                      dashboardHeader(title = h4(HTML("name"))),
+                      dashboardHeader(title = h4(HTML("xxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxxxxxxx"))),
                       #Sidebar content of the dashboard
                       sidebar <- dashboardSidebar(width=300,
                                                   
@@ -286,93 +196,93 @@ ui <- dashboardPage(  title="xxxx",
                                                     actionButton("resample"," Hit to sample another data set", icon = icon("th"),  width =250  ),
                                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                                     
-                                                    menuItem("xxxxxxxxxxxxxx", tabName = "Wiki",      icon = icon("bar-chart-o"), selected = FALSE),
+                                                    menuItem("Wiki", tabName = "Wiki",      icon = icon("bar-chart-o"), selected = FALSE),
                                                     
                                                     
-                                                    menuItem("xxxxxxxxxxxxxx", icon = icon("bar-chart-o"),
+                                                    menuItem("Define parameters ", icon = icon("bar-chart-o"),
                                                              splitLayout(
                                                                
                                                                tags$div(
-                                                                 textInput(inputId="n", label='xxxx', width = '90%' , value="800"),
+                                                                 textInput(inputId="n", label='xxxxxxxxxxxxx', width = '90%' , value="800"),
                                                                ),
                                                                
                                                                tags$div(
-                                                                 textInput(inputId='allocation', label='xxxx', width = '90%' , ".5"),
+                                                                 textInput(inputId='allocation', label='xxxxxxxxxxxxx', width = '90%' , ".5"),
                                                                ) 
                                                              ) ,
                                                              
                                                              splitLayout(
                                                                
                                                                tags$div(
-                                                                 textInput(inputId='baseline', label='xxxx', width = '90%' , ".4"),
+                                                                 textInput(inputId='baseline', label='xxxxxxxxxxxxx', width = '90%' , ".4"),
                                                                ),
                                                                
                                                                tags$div(
-                                                                 textInput(inputId='hr', label='xxxx', width = '90%' , ".75"),
+                                                                 textInput(inputId='hr', label='xxxxxxxxxxxxx', width = '90%' , ".75"),
                                                                ) 
                                                                
                                                              ) 
                                                     ),
                                                     
                                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                                    menuItem("xxxx",  startExpanded = FALSE,  icon = icon("bar-chart-o"),
+                                                    menuItem("Analyses",  startExpanded = FALSE,  icon = icon("bar-chart-o"),
                                                              #~~~~~~~~~~~~~~~~~~~~~~~~
-                                                             menuSubItem("xxxx",    tabName = "OVERVIEW",  icon = icon("bar-chart-o"), selected = TRUE),
-                                                             menuSubItem("xxxx",                 tabName = "RESULTS2",  icon = icon("bar-chart-o")),
-                                                             menuSubItem("xxxx",       tabName = "RESULTS3",  icon = icon("bar-chart-o")),
-                                                             menuSubItem("xxxx",                    tabName = "HELP",      icon = icon("bar-chart-o"), selected = FALSE),
-                                                             menuSubItem("xxxx",         tabName = "RESULTS4",  icon = icon("bar-chart-o")),
-                                                             menuSubItem("xxxx",         tabName = "RESULTS1",  icon = icon("table")),
+                                                             menuSubItem("Kaplan Meier (landing page)",    tabName = "OVERVIEW",  icon = icon("bar-chart-o"), selected = TRUE),
+                                                             menuSubItem("KM diagnostics",                 tabName = "RESULTS2",  icon = icon("bar-chart-o")),
+                                                             menuSubItem("Cox proportional hazards",       tabName = "RESULTS3",  icon = icon("bar-chart-o")),
+                                                             menuSubItem("Cox PH Explanation",             tabName = "HELP",      icon = icon("bar-chart-o"), selected = FALSE),
+                                                             menuSubItem("Hazard ratio over time",         tabName = "RESULTS4",  icon = icon("bar-chart-o")),
+                                                             menuSubItem("Partial log likelihood",         tabName = "RESULTS1",  icon = icon("table")),
                                                              #~~~~~~~~~~~~~~~~~~~~~~~~
-                                                             menuSubItem("xxxx", tabName = "OVERVIEW2",  icon = icon("bar-chart-o"), selected = FALSE),
+                                                             menuSubItem("Only ranks of event times needed!", tabName = "OVERVIEW2",  icon = icon("bar-chart-o"), selected = FALSE),
                                                              #~~~~~~~~~~~~~~~~~~~~~~~~
-                                                             menuSubItem("xxxx", tabName = "OVERVIEW3",  icon = icon("bar-chart-o"), selected = FALSE),
+                                                             menuSubItem("Model assumptions", tabName = "OVERVIEW3",  icon = icon("bar-chart-o"), selected = FALSE),
                                                              #~~~~~~~~~~~~~~~~~~~~~~~~
-                                                             menuSubItem("xxxx",                   tabName = "KMTABLE",  icon = icon("list-alt")),
+                                                             menuSubItem("KM lifetable",                   tabName = "KMTABLE",  icon = icon("list-alt")),
                                                              #~~~~~~~~~~~~~~~~~~~~~~~~
-                                                             menuItem("xxxx",  startExpanded = FALSE,    icon = icon("table"),
+                                                             menuItem("Partial likelihood exercise",  startExpanded = FALSE,    icon = icon("table"),
                                                                       
                                                                       tags$div(
-                                                                        textInput(inputId="guess", label='xxxx', width = '90%' , value="1"),
+                                                                        textInput(inputId="guess", label='xxxxxxxxxxxxx', width = '90%' , value="1"),
                                                                       ),
                                                                       
-                                                                      menuSubItem("Hit to reveal xxxx",  tabName = "partial")
+                                                                      menuSubItem("Hit to reveal Partial log likelihood",  tabName = "partial")
                                                              )
                                                              #~~~~~~~~~~~~~~~~~~~~~~~~
                                                              
                                                     ),
                                                     #
                                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                                    menuItem("xxxxxxxxxxxxxx",  startExpanded = FALSE,    icon = icon("table")  ,
+                                                    menuItem("Change in hazard",  startExpanded = FALSE,    icon = icon("table")  ,
                                                              
                                                              tags$div(
-                                                               textInput(inputId="base", label='Enter xxxx', width = '90%' , value="0.03"),
+                                                               textInput(inputId="base", label='Enter xxxxxxxxxxxxx', width = '90%' , value="0.03"),
                                                              ),
                                                              tags$div(
-                                                               textInput(inputId="cens", label='Enter xxxx', width = '90%' , value="0.02"),
+                                                               textInput(inputId="cens", label='Enter xxxxxxxxxxxxx', width = '90%' , value="0.02"),
                                                              ),
                                                              tags$div(
-                                                               textInput(inputId="hr2", label='Enter xxxx', width = '90%' , value="1.2"),
+                                                               textInput(inputId="hr2", label='Enter xxxxxxxxxxxxx', width = '90%' , value="1.2"),
                                                              ),
                                                              tags$div(
-                                                               textInput(inputId="per", label='Enter xxxx',        width = '90%' , value="0.70"),
-                                                               textInput(inputId="per2", label='Enter xxxx', width = '90%' , value="0.50"),
+                                                               textInput(inputId="per", label='Enter xxxxxxxxxxxxx',        width = '90%' , value="0.70"),
+                                                               textInput(inputId="per2", label='Enter xxxxxxxxxxxxx', width = '90%' , value="0.50"),
                                                              ),
                                                              
-                                                             menuSubItem("Hit to reveal xxxx",  tabName = "Change"),
-                                                             menuSubItem("Hit to reveal xxxx",  tabName = "Changeh")    ,
-                                                             menuSubItem("Hit to reveal xxxx",  tabName = "Changeh2") 
+                                                             menuSubItem("Hit to reveal xxxxxxxxxxxxx",  tabName = "Change"),
+                                                             menuSubItem("Hit to reveal xxxxxxxxxxxxx",  tabName = "Changeh")    ,
+                                                             menuSubItem("Hit to reveal xxxxxxxxxxxxx",  tabName = "Changeh2") 
                                                     ),
                                                     
                                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                                    menuItem("xxxxxxxxxxxxxx",  startExpanded = FALSE,    icon = icon("table")  ,
+                                                    menuItem("Power",  startExpanded = FALSE,    icon = icon("table")  ,
                                                              
                                                              splitLayout(
                                                                tags$div(
-                                                                 textInput(inputId="ss", label='Enter xxxx',   value="0.7, 0.5"),
+                                                                 textInput(inputId="ss", label='Enter xxxxxxxxxxxxx',   value="0.7, 0.5"),
                                                                ),
                                                                tags$div(
-                                                                 textInput(inputId="ss2", label='Enter xxxx',  value="11.9, 23.1"),
+                                                                 textInput(inputId="ss2", label='Enter xxxxxxxxxxxxx',  value="11.9, 23.1"),
                                                                )
                                                                
                                                              ),
@@ -380,20 +290,20 @@ ui <- dashboardPage(  title="xxxx",
                                                              #~~~~~~~~~~~~~~~~~~~~~~~~~
                                                              splitLayout(
                                                                tags$div(
-                                                                 textInput(inputId="tt", label='Enter xxxx',        value="500,500"),
+                                                                 textInput(inputId="tt", label='Enter xxxxxxxxxxxxx',        value="500,500"),
                                                                ),
                                                                tags$div(
-                                                                 textInput(inputId="hrx", label='Enter xxxx',       value="1.2"),
+                                                                 textInput(inputId="hrx", label='Enter xxxxxxxxxxxxx',       value="1.2"),
                                                                )
                                                                
                                                              ),
                                                              #~~~~~~~~~~~~~~~~~~~~~~~~~
                                                              splitLayout(
                                                                tags$div(
-                                                                 textInput(inputId="af", label='Enter xxxx',   value="3"),
+                                                                 textInput(inputId="af", label='Enter xxxxxxxxxxxxx',   value="3"),
                                                                ),
                                                                tags$div(
-                                                                 textInput(inputId="af2", label='Enter xxxx',    value="160"),
+                                                                 textInput(inputId="af2", label='Enter xxxxxxxxxxxxx',    value="160"),
                                                                )
                                                                
                                                              ),
@@ -402,40 +312,40 @@ ui <- dashboardPage(  title="xxxx",
                                                              
                                                              splitLayout(
                                                                tags$div(
-                                                                 textInput(inputId="sim", label='xxxx',  width = '60%' ,  value="500"),
+                                                                 textInput(inputId="sim", label='Number of xxxxxxxxxxxxx',  width = '60%' ,  value="500"),
                                                                ),
                                                                tags$div(
                                                                  
-                                                                 textInput(inputId="t2", label='xxxx', width = '55%' , value="0.1"),
+                                                                 textInput(inputId="t2", label='xxxxxxxxxxxxx', width = '55%' , value="0.1"),
                                                                )
                                                                
                                                              ),
                                                              
                                                              #~~~~~~~~~~~~~~~~~~~~~~~~~
                                                              
-                                                             menuSubItem("Hit to reveal xxxx",  tabName = "power"),
-                                                             menuSubItem("Hit to reveal xxxx",  tabName = "weibull")
+                                                             menuSubItem("Hit to xxxxxxxxxxxxx",  tabName = "power"),
+                                                             menuSubItem("Hit to xxxxxxxxxxxxx",  tabName = "weibull")
                                                              
                                                     ),
                                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                                     
-                                                    menuItem("xxxx",  startExpanded = FALSE,    icon = icon("table"),
+                                                    menuItem("The Weibull Distributions",  startExpanded = FALSE,    icon = icon("table"),
                                                              
                                                              tags$div(
-                                                               textInput(inputId="shape", label='xxxx', width = '90%' , value="1"),
+                                                               textInput(inputId="shape", label='Weibull shape', width = '90%' , value="1"),
                                                              ),
                                                              
                                                              tags$div(
-                                                               textInput(inputId="scale", label='xxxx', width = '90%' , value="0.03"),
+                                                               textInput(inputId="scale", label='Weibull scale', width = '90%' , value="0.03"),
                                                              ),
                                                              
-                                                             menuSubItem("Hit to reveal xxxx",  tabName = "survhaz")
+                                                             menuSubItem("Hit to reveal Survival hazard relationship",  tabName = "survhaz")
                                                     ),
                                                     
                                                     # menuItem("Explanation",                    tabName = "HELP",icon = icon("bar-chart-o"), selected = FALSE),
                                                     # menuItem("Wiki", tabName = "Wiki",                          icon = icon("bar-chart-o"), selected = FALSE),
                                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                                    menuItem("xxxxxxxxxxxxxx", icon = icon("bar-chart-o"),
+                                                    menuItem("Code", icon = icon("bar-chart-o"),
                                                              menuSubItem("Shiny",  
                                                                          icon = icon("send",lib='glyphicon'), 
                                                                          href = "https://raw.githubusercontent.com/eamonn2014/PARTIAL-LIKELIHOOD-METHOD/master/app.R"),
@@ -447,32 +357,32 @@ ui <- dashboardPage(  title="xxxx",
                                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                                     menuItem("References", icon = icon("bar-chart-o"),
                                                              
-                                                             menuSubItem(h5(HTML( "xxxx")),  
+                                                             menuSubItem(h5(HTML( "xxxxxxxxxxxxx")),  
                                                                          icon = icon("send",lib='glyphicon'), 
                                                                          href = "http://www.stat.cmu.edu/~ryantibs/journalclub/cox_1972.pdf"),
                                                              
-                                                             menuSubItem(h5(HTML( "xxxx")),
+                                                             menuSubItem(h5(HTML( "xxxxxxxxxxxxx")),
                                                                          icon = icon("send",lib='glyphicon'), 
                                                                          href = "https://jme.bmj.com/content/medethics/31/12/703.full.pdf") ,
                                                              #dashboardHeader(title = h4(HTML("This title<br/>is just way too long")))
                                                              
-                                                             menuSubItem( h5(HTML("xxxx")),  
+                                                             menuSubItem( h5(HTML("xxxxxxxxxxxxx")),  
                                                                           icon = icon("send",lib='glyphicon'), 
                                                                           href = "https://understandinguncertainty.org/node/759"),
                                                              
-                                                             menuSubItem( h5(HTML("xxxx")),  
+                                                             menuSubItem( h5(HTML("xxxxxxxxxxxxx")),  
                                                                           icon = icon("send",lib='glyphicon'), 
                                                                           href = "https://github.com/eamonn2014/PARTIAL-LIKELIHOOD-METHOD/blob/master/Analysis%20of%20time-to-event%20for%20observational%20studies.pdf"),
                                                              
-                                                             menuSubItem( h5(HTML("xxxx")),  
+                                                             menuSubItem( h5(HTML("xxxxxxxxxxxxx")),  
                                                                           icon = icon("send",lib='glyphicon'), 
                                                                           href = "https://influentialpoints.com/Training/coxs_proportional_hazards_regression_model-principles-properties-assumptions.htm"),
                                                              
-                                                             menuSubItem( h5(HTML("xxxx")),  
+                                                             menuSubItem( h5(HTML("xxxxxxxxxxxxx")),  
                                                                           icon = icon("send",lib='glyphicon'), 
                                                                           href = "https://rdrr.io/cran/rms/man/cph.html"),
                                                              
-                                                             menuSubItem( h5(HTML("xxxx")),  
+                                                             menuSubItem( h5(HTML("xxxxxxxxxxxxx")),  
                                                                           icon = icon("send",lib='glyphicon'), 
                                                                           href = "https://thestatsgeek.com/2014/03/28/interpreting-changes-in-hazard-and-hazard-ratios")
                                                              
@@ -514,7 +424,7 @@ ui <- dashboardPage(  title="xxxx",
                           
                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                           
-                          tabItem("xxxxxxxxxxxxxx", 
+                          tabItem("Wiki", 
                                   fluidRow(
                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     box(  width=6,
@@ -523,7 +433,7 @@ ui <- dashboardPage(  title="xxxx",
                                           ,solidHeader = TRUE 
                                           ,collapsible = TRUE 
                                           
-                                          ,p("xxxx")  
+                                          ,p("xxxxxxxxxxxxx")  
                                           
                                           
                                           
@@ -536,41 +446,7 @@ ui <- dashboardPage(  title="xxxx",
                                       ,solidHeader = TRUE 
                                       ,collapsible = TRUE 
                                       
-                                      ,p("xxxx")
-                                      
-                                      ,p("xxxx")
-                                      
-                                      ,p("The last selection provides some links to resources. More useful resources are linked to below:"),
-                                      
-                                      
-                                      tags$a(href = "https://rviews.rstudio.com/2020/11/02/simulating-biologically-plausible-survival-data/", tags$span(style="color:blue", "xxxx"),),
-                                      div(p(" ")),
-                                      
-                                      tags$a(href = "https://thestatsgeek.com/list-of-posts/#surv", tags$span(style="color:blue", "xxxx"),),
-                                      div(p(" ")),
-                                      
-                                      tags$a(href = "https://grokbase.com/t/r/r-help/04a5ydyst0/r-nelson-aalen-estimator-in-r", tags$span(style="color:blue", "xxxx"),),
-                                      div(p(" ")),
-                                      
-                                      tags$a(href = "https://rstudio-pubs-static.s3.amazonaws.com/258589_cd197f86fb5548ac89d7bcffd4bc6afe.html", tags$span(style="color:blue", "xxxx"),),
-                                      div(p(" ")),
-                                      
-                                      tags$a(href = "https://stattools.crab.org/index.html", tags$span(style="color:blue", "xxxx"),),
-                                      div(p(" ")),
-                                      
-                                      tags$a(href = "https://www.itl.nist.gov/div898/handbook/eda/section3/eda3668.htm", tags$span(style="color:blue", "xxxx"),),
-                                      div(p(" ")),
-                                      
-                                      tags$a(href = "https://sas-and-r.blogspot.com/2010/03/example-730-simulate-censored-survival.html?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+SASandR+%28SAS+and+R%29", tags$span(style="color:blue", "xxxx"),),
-                                      div(p(" ")),
-                                      
-                                      tags$a(href = "https://www.youtube.com/watch?v=EoIB_Obddrk&t=327s&ab_channel=RMSRegression", tags$span(style="color:blue", "xxxx"),),
-                                      div(p(" "))
-                                      
-                                      ,p("xxxx")
-                                      ,p("xxxx")
-                                      ,p("xxxx")
-                                      ,p("xxxx")
+                                      ,p("xxxxxxxxxxxxx")
                                       
                                     ),  # box end
                                   )
@@ -579,7 +455,7 @@ ui <- dashboardPage(  title="xxxx",
                           tabItem("OVERVIEW",
                                   fluidRow(
                                     box(
-                                      title = "xxxx"
+                                      title = "xxxxxxxxxxxxx"
                                       ,status = "primary"
                                       ,solidHeader = TRUE 
                                       ,collapsible = TRUE 
@@ -590,24 +466,24 @@ ui <- dashboardPage(  title="xxxx",
                                       h5(textOutput("Staff_name4")),
                                       h5(textOutput("Staff_name5")),
                                       
-                                      tags$a(href = "https://www.youtube.com/watch?v=EoIB_Obddrk&t=327s&ab_channel=RMSRegression", tags$span(style="color:blue", "xxxx"),),
+                                      tags$a(href = "https://www.youtube.com/watch?v=EoIB_Obddrk&t=327s&ab_channel=RMSRegression", tags$span(style="color:blue", "xxxxxxxxxxxxx"),),
                                       div(p(" "))
                                       
                                       
                                     )
                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     ,box(
-                                      title='xxxx'
+                                      title='xxxxxxxxxxxxx'
                                       ,status = "primary"
                                       ,solidHeader = TRUE 
                                       ,collapsible = TRUE 
                                       ,plotOutput("plot2", height = "720px")
                                     ))),               
                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                          tabItem("xxxxxxxxxxxxxx",
+                          tabItem("OVERVIEW2",
                                   fluidRow(
                                     box(
-                                      title =   "xxxx"   # uiOutput('product'), 
+                                      title =   "Kaplan-Meier curve"   # uiOutput('product'), 
                                       ,status = "primary"
                                       ,solidHeader = TRUE 
                                       ,collapsible = TRUE 
@@ -616,7 +492,7 @@ ui <- dashboardPage(  title="xxxx",
                                     )
                                     
                                     ,box(
-                                      title="xxxx"
+                                      title="xxxxxxxxxxxxx"
                                       ,status = "primary"
                                       ,solidHeader = TRUE 
                                       ,collapsible = TRUE 
@@ -625,10 +501,10 @@ ui <- dashboardPage(  title="xxxx",
                                     ))),   
                           
                           
-                          tabItem("xxxxxxxxxxxxxx",
+                          tabItem("OVERVIEW3",
                                   fluidRow(
                                     box(
-                                      title =   "xxxxxxxxxxxxxx"     
+                                      title =   "xxxxxxxxxxxxx"     
                                       ,status = "primary"
                                       ,solidHeader = TRUE 
                                       ,collapsible = TRUE 
@@ -641,16 +517,16 @@ ui <- dashboardPage(  title="xxxx",
                                       ,status = "primary"
                                       ,solidHeader = TRUE 
                                       ,collapsible = TRUE 
-                                      ,p("xxxxxxxxxxxxxx")
+                                      ,p("xxxxxxxxxxxxx")
                                       
                                     ))),   
                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                          tabItem("xxxxxxxxxxxxxx",
+                          tabItem("RESULTS1",
                                   fluidRow(        
                                     
                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     box(width=8,
-                                        title = "xxxxxxxxxxxxxx"
+                                        title = "xxxxxxxxxxxxx"
                                         ,status = "primary"
                                         ,solidHeader = TRUE 
                                         ,collapsible = TRUE 
@@ -658,12 +534,12 @@ ui <- dashboardPage(  title="xxxx",
                                     ))),
                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                           # new tab
-                          tabItem("xxxxxxxxxxxxxx",
+                          tabItem("partial",
                                   fluidRow(
                                     box(
                                       width=7,
                                       # background = "green",
-                                      title = "xxxxxxxxxxxxxx"
+                                      title = "xxxxxxxxxxxxx"
                                       ,status = "primary"
                                       ,solidHeader = TRUE 
                                       ,collapsible = TRUE 
@@ -672,43 +548,39 @@ ui <- dashboardPage(  title="xxxx",
                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     ,box(
                                       width=5,
-                                      title='xxxxxxxxxxxxxx'
+                                      title='xxxxxxxxxxxxx'
                                       ,status = "primary"
                                       ,solidHeader = TRUE 
                                       ,collapsible = TRUE 
                                       , DT::dataTableOutput("exercise2")
                                       ,p("")
-                                      ,p("xxxxxxxxxxxxxx")
+                                      ,p("xxxxxxxxxxxxx")
                                     ))),        
                           
                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                          tabItem("xxxxxxxxxxxxxx", 
+                          tabItem("HELP", 
                                   fluidRow(
                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     box(  
-                                      title='xxxxxxxxxxxxxx'
+                                      title='xxxxxxxxxxxxx xxxxxxxxxxxxx'
                                       ,status = "primary"
                                       ,solidHeader = TRUE 
                                       ,collapsible = TRUE ,
                                       textOutput("help"),
                                       withMathJax(),  # need this to be stated
                                       
-                                      p("xxxxxxxxxxxxxx"),
-                                      
-                                      p("xxxxxxxxxxxxxx"),
-                                      
-                                      p("xxxxxxxxxxxxxx"),   
-                                      
-                                      p("xxxxxxxxxxxxxx"),
+                                      p("xxxxxxxxxxxxx"),
                                       
                                     )
                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     ,box(
-                                      title='Partial likelihood'
+                                      title='xxxxxxxxxxxxx xxxxxxxxxxxxx'
                                       ,status = "primary"
                                       ,solidHeader = TRUE 
                                       ,collapsible = TRUE ,
-                                      p("xxxxxxxxxxxxxx")
+                                      p("xxxxxxxxxxxxx"),
+                                      
+                                      p("xxxxxxxxxxxxx")
                                       
                                     ),  # box end
                                     
@@ -716,11 +588,11 @@ ui <- dashboardPage(  title="xxxx",
                                   
                           ),
                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                          tabItem("xxxxxxxxxxxxxx",
+                          tabItem("RESULTS3",
                                   fluidRow(
                                     
                                     box(width=6,
-                                        title = "xxxxxxxxxxxxxx"
+                                        title = "xxxxxxxxxxxxx"
                                         ,status = "primary"
                                         ,solidHeader = TRUE 
                                         ,collapsible = TRUE 
@@ -729,31 +601,31 @@ ui <- dashboardPage(  title="xxxx",
                                     ),
                                     
                                     box(width=6,
-                                        title = "xxxxxxxxxxxxxx"
+                                        title = "xxxxxxxxxxxxx"
                                         ,status = "primary"
                                         ,solidHeader = TRUE 
                                         ,collapsible = TRUE 
                                         ,plotOutput("plot3", height = "720px")
-                                        ,p("xxxxxxxxxxxxxx ")
+                                        ,p("xxxxxxxxxxxxx")
                                     )
                                     
                                   )),
                           
                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-                          tabItem("xxxxxxxxxxxxxx",
+                          tabItem("RESULTS4",
                                   fluidRow(
                                     
                                     box(width=6,
-                                        title='xxxxxxxxxxxxxx'
+                                        title='xxxxxxxxxxxxx'
                                         ,status = "primary"
                                         ,solidHeader = TRUE 
                                         ,collapsible = TRUE 
                                         ,plotOutput("plot4", height = "720px")
-                                        ,p("xxxxxxxxxxxxxx")
+                                        ,p("xxxxxxxxxxxxx")
                                     )
                                     
                                     ,box(width=6,
-                                         title='xxxxxxxxxxxxxx'
+                                         title='xxxxxxxxxxxxx'
                                          ,status = "primary"
                                          ,solidHeader = TRUE 
                                          ,collapsible = TRUE 
@@ -764,37 +636,37 @@ ui <- dashboardPage(  title="xxxx",
                                   fluidRow(
                                     
                                     box(width=6,
-                                        title='xxxxxxxxxxxxxx'
+                                        title='xxxxxxxxxxxxx'
                                         ,status = "primary"
                                         ,solidHeader = TRUE 
                                         ,collapsible = TRUE 
                                         ,plotOutput("survhaz", height = "720px")
-                                        ,p("xxxxxxxxxxxxxx")
+                                        ,p("xxxxxxxxxxxxx")
                                     )
                                     
                                     ,box(width=6,
-                                         title='Hazard function'
+                                         title='xxxxxxxxxxxxx'
                                          ,status = "primary"
                                          ,solidHeader = TRUE 
                                          ,collapsible = TRUE 
                                          ,plotOutput("survhaz2", height = "720px")
-                                         ,p("xxxxxxxxxxxxxx")
+                                         ,p("xxxxxxxxxxxxx")
                                     ))),
                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                           tabItem("Change",
                                   fluidRow(
                                     
                                     box(width=6,
-                                        title='xxxxxxxxxxxxxx'
+                                        title='xxxxxxxxxxxxx'
                                         ,status = "primary"
                                         ,solidHeader = TRUE 
                                         ,collapsible = TRUE 
                                         ,plotOutput("plot1c", height = "720px")
-                                        ,p("xxxxxxxxxxxxxx")
+                                        ,p("xxxxxxxxxxxxx")
                                     )
                                     
                                     ,box(width=6,
-                                         title='xxxxxxxxxxxxxx'
+                                         title='xxxxxxxxxxxxx'
                                          ,status = "primary"
                                          ,solidHeader = TRUE 
                                          ,collapsible = TRUE 
@@ -806,25 +678,25 @@ ui <- dashboardPage(  title="xxxx",
                           
                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                           
-                          tabItem("xxxxxxxxxxxxxx",
+                          tabItem("Changeh",
                                   fluidRow(
                                     
                                     box(width=6,
-                                        title='xxxxxxxxxxxxxx'
+                                        title='xxxxxxxxxxxxx'
                                         ,status = "primary"
                                         ,solidHeader = TRUE 
                                         ,collapsible = TRUE 
                                         ,plotOutput("ploth", height = "720px")
-                                        ,p("xxxxxxxxxxxxxx")
+                                        ,p("xxxxxxxxxxxxx")
                                     )
                                     
                                     ,box(width=6,
-                                         title='xxxxxxxxxxxxxx'
+                                         title='xxxxxxxxxxxxx'
                                          ,status = "primary"
                                          ,solidHeader = TRUE 
                                          ,collapsible = TRUE 
                                          ,plotOutput("ploth1", height = "720px")
-                                         ,p("xxxxxxxxxxxxxx")
+                                         ,p("xxxxxxxxxxxxx")
                                          
                                          
                                     ))),
@@ -835,12 +707,12 @@ ui <- dashboardPage(  title="xxxx",
                                   fluidRow(
                                     
                                     box(width=12,
-                                        title='xxxxxxxxxxxxxx'
+                                        title='xxxxxxxxxxxxx xxxxxxxxxxxxx'
                                         ,status = "primary"
                                         ,solidHeader = TRUE 
                                         ,collapsible = TRUE 
                                         ,plotOutput("ploth2", height = "720px")
-                                        , p("xxxxxxxxxxxxxx")
+                                        , p("xxxxxxxxxxxxx")
                                         
                                     )
                                     
@@ -852,8 +724,7 @@ ui <- dashboardPage(  title="xxxx",
                                     #      ,collapsible = TRUE 
                                     #    
                                     # )
-                                    
-                                  )),
+                                                                      )),
                           
                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                           
@@ -862,23 +733,23 @@ ui <- dashboardPage(  title="xxxx",
                                   fluidRow(
                                     
                                     box(width=6,
-                                        title='xxxxxxxxxxxxxx'
+                                        title='xxxxxxxxxxxxx'
                                         ,status = "primary"
                                         ,solidHeader = TRUE 
                                         ,collapsible = TRUE 
                                         ,plotOutput("powerp1", height = "720px")
-                                        ,p("xxxxxxxxxxxxxx")
+                                        ,p("xxxxxxxxxxxxx")
                                         ,h5(verbatimTextOutput("powerp2"))
                                     )
                                     
                                     ,box(width=6,
-                                         title='xxxxxxxxxxxxxx'
+                                         title='xxxxxxxxxxxxx'
                                          ,status = "primary"
                                          ,solidHeader = TRUE 
                                          ,collapsible = TRUE 
                                          
                                          ,plotlyOutput("powerp3", height = "720px")
-                                         ,p("xxxxxxxxxxxxxx")
+                                         ,p("xxxxxxxxxxxxx")
                                          ,h5(verbatimTextOutput("powerp5"))
                                          ,h5(verbatimTextOutput("powerp4"))
                                     ))),
@@ -890,7 +761,7 @@ ui <- dashboardPage(  title="xxxx",
                                   fluidRow(
                                     
                                     box(width=6,
-                                        title='xxxxxxxxxxxxxx'
+                                        title='xxxxxxxxxxxxx'
                                         ,status = "primary"
                                         ,solidHeader = TRUE 
                                         ,collapsible = TRUE 
@@ -899,7 +770,7 @@ ui <- dashboardPage(  title="xxxx",
                                     )
                                     
                                     ,box(width=6,
-                                         title='xxxxxxxxxxxxxx'
+                                         title='xxxxxxxxxxxxx'
                                          ,status = "primary"
                                          ,solidHeader = TRUE 
                                          ,collapsible = TRUE 
@@ -913,7 +784,7 @@ ui <- dashboardPage(  title="xxxx",
                                     box(
                                       width=6,
                                       # background = "green",
-                                      title = "xxxxxxxxxxxxxx"
+                                      title = "KM survival table"
                                       ,status = "primary"
                                       ,solidHeader = TRUE 
                                       ,collapsible = TRUE 
@@ -922,45 +793,45 @@ ui <- dashboardPage(  title="xxxx",
                                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     ,box(
                                       width=6,
-                                      title='xxxxxxxxxxxxxx'
+                                      title='xxxxxxxxxxxxx xxxxxxxxxxxxx'
                                       ,status = "primary"
                                       ,solidHeader = TRUE 
                                       ,collapsible = TRUE 
                                       , DT::dataTableOutput("CHAZ")
                                       ,p("")
-                                      ,p("xxxxxxxxxxxxxx")
+                                      ,p("xxxxxxxxxxxxx")
                                     ))),        
                           
                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                           tabItem("RESULTS2",
                                   fluidRow(
                                     box(width=4,
-                                        title = "xxxxxxxxxxxxxx" 
+                                        title = "xxxxxxxxxxxxx xxxxxxxxxxxxx" 
                                         ,status = "primary"
                                         ,solidHeader = TRUE 
                                         ,collapsible = TRUE 
                                         ,plotlyOutput("plot99a", height = "720px")
-                                        ,p("xxxxxxxxxxxxxx")
+                                        ,p("xxxxxxxxxxxxx")
                                     )
                                     
                                     ,box(width=4,
-                                         title="Cumulative Hazard" 
+                                         title="xxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxxxxxxx" 
                                          ,status = "primary"
                                          ,solidHeader = TRUE
                                          ,collapsible = TRUE
                                          ,plotlyOutput("plot99b", height = "720px")
                                          
                                          ,h5(textOutput("info3"))
-                                         ,p("xxxxxxxxxxxxxx")
+                                         ,p("xxxxxxxxxxxxx")
                                     ) 
                                     
                                     ,box(width=4,
-                                         title="Complementary log−log" 
+                                         title="xxxxxxxxxxxxx xxxxxxxxxxxxx" 
                                          ,status = "primary"
                                          ,solidHeader = TRUE
                                          ,collapsible = TRUE
                                          ,plotlyOutput("plot99c", height = "720px")  
-                                         ,p("xxxxxxxxxxxxxx")
+                                         ,p("xxxxxxxxxxxxx")
                                     ) 
                                     
                                     
@@ -984,7 +855,7 @@ server <- function(input, output) {
     valueBox(
       value =  tags$p(paste0(formatz0(setUpByName())," / ",formatz0(setUpByNamea()) ," / ",formatz00(setUpByNameb()) ," / ",formatz1(setUpByNamec()) ," / ",formatz2(setUpByNamea()/setUpByNameb()  )    )
                       ,style = "font-size: 100%;")
-      ,subtitle = tags$p('N; Events (a); Exposure (b); Median surv.; Hazard (a/b)', style = "font-size: 150%;")
+      ,subtitle = tags$p('xxxxxxxxxxxxx xxxxxxxxxxxxx', style = "font-size: 150%;")
       ,icon = icon("stats",lib='glyphicon')
       ,color = "red" )
     
@@ -995,7 +866,7 @@ server <- function(input, output) {
     valueBox(
       value =  tags$p(paste0(formatz0(setUpByName2())," / ",formatz0(setUpByName2a()) ," / ",formatz00(setUpByName2b()) ," / ",formatz1(setUpByName2c()) ," / ",formatz2(setUpByName2a()/setUpByName2b()  )    )
                       ,style = "font-size: 100%;")
-      ,subtitle = tags$p('N; Events (a); Exposure (b); Median surv.; Hazard (a/b)', style = "font-size: 150%;")
+      ,subtitle = tags$p('xxxxxxxxxxxxx xxxxxxxxxxxxx', style = "font-size: 150%;")
       ,icon = icon("stats",lib='glyphicon')
       ,color = "teal")
     
@@ -1006,7 +877,7 @@ server <- function(input, output) {
     valueBox(
       value =  tags$p(paste0(formatz2(setUpByName4())," ( ",formatz2(setUpByName5()),", ",formatz2(setUpByName6())," ) " ," ; ",formatz1(setUpByNameLL()))
                       ,style = "font-size: 100%;")
-      ,subtitle = tags$p(paste0("Hazard ratio trt 1 v 0 with 95% conf. ; log likelihood"), style = "font-size: 150%;")
+      ,subtitle = tags$p(paste0("xxxxxxxxxxxxx xxxxxxxxxxxxx"), style = "font-size: 150%;")
       ,icon = icon("education",lib='glyphicon')
       ,color = "green")
     
@@ -1808,18 +1679,7 @@ server <- function(input, output) {
     wordd <- ifelse(beta1 < 1,"will reduce", 
                     ifelse(beta1 > 1, "will increase ","will not change")) 
     
-    c(paste0(" 
-    With a shape parameter of 1 and a scale parameter of ",lambdaT," a survival curve is created based on a Weibull distribution.
-    When the shape parameter equals 1 the Weibull reduces to an exponential distribution. Let's assume time is measured in months.
-    The time to reach median survival is equal to -log(0.5) / ",formatz2(lambdaT),". 
-             This equates to a median survival of ", formatz2(-log(.5)*1/lambdaT)," months. 
-             
-             Replacing 0.5 with a desired survival percentile will return the associated time. 
-             Enter survival probabilities in the two boxes on the left. 
-             
-             The time at which the survival probability is ",per* 100,"% is ",  formatz2(-log(per)* 1/lambdaT), " months.
-             The time at which the survival probability is ",per2*100,"% is ",  formatz2(-log(per2)*1/lambdaT), " months"
-    ))
+    c(paste0("xxxxxxxxxxxxx"))
     
     
   })
@@ -1845,12 +1705,7 @@ server <- function(input, output) {
                     ifelse(beta1 > 1, "will increase ","will not change")) 
     
     
-    c(paste0("Now if we are postulating that a new treatment " ,wordd," the hazard by ",yo,"% we can use 
-               the fact S1(t) = S0(t)^exp Bx, with exp Bx=", (beta1)," the 
-              probability of survival at ",  formatz2(-log(per)*  1/lambdaT), " months now becomes ",formatz2((per)^(beta1)) ,".
-          The probability of survival at ",  formatz2(-log(per2)* 1/lambdaT), " months now becomes ",formatz2((per2)^(beta1)) ,"
-          . See the arrows in the plot showing the changes in survival. 
-             " ) )
+    c(paste0("xxxxxxxxxxxxx " ) )
     
   })
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
@@ -2424,20 +2279,20 @@ server <- function(input, output) {
     
     wordup2 <- ifelse(X>1,"increase", "reduction")
     
-    paste0( "xxxxxxxxxxxxxx")   
+    paste0( "xxxxxxxxxxxxx ")   
     
   })
   
   output$Staff_name3<- renderText({  
-    paste0( "xxxxxxxxxxxxxx")
+    paste0( "xxxxxxxxxxxxx")
   })
   
   output$Staff_name4<- renderText({  
-    paste0( "xxxxxxxxxxxxxx")
+    paste0( "xxxxxxxxxxxxx")
   })
   
   output$Staff_name5<- renderText({  
-    paste0( "xxxxxxxxxxxxxx") 
+    paste0( "xxxxxxxxxxxxx") 
     
   })
   
@@ -2491,13 +2346,13 @@ server <- function(input, output) {
   
   output$info <- renderText({  
     
-    c("xxxxxxxxxxxxxx.")
+    c("xxxxxxxxxxx")
     
   })
   
   output$info2 <- renderText({  
     
-    c("xxxxxxxxxxxxxx")
+    c("xxxxxxxxxxx")
     
   })
   
@@ -2508,7 +2363,7 @@ server <- function(input, output) {
     hr=        sample$hr
     baseline=  sample$baseline
     
-    c(paste0("xxxxxxxxxxxxxx"))
+    c(paste0("xxxxxxxxxxx"))
     
   })
   
