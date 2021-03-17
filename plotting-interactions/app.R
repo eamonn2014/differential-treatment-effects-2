@@ -1,4 +1,5 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# dashboard template
 # load the required packages
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
