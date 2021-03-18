@@ -84,6 +84,7 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                                       
                                                       id = "tabs",
                                                       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                       
                                                       
                                                       br(),
                                                       tags$head(
@@ -96,39 +97,90 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                                       
                                                       
                                                       menuItem("Define parameters ", icon = icon("bar-chart-o"),
-                                                               splitLayout(
-                                                                   
-                                                                   tags$div(
-                                                                       textInput(inputId="n", label='xxxxxxxxxxxxx', width = '90%' , value="800"),
-                                                                   ),
-                                                                   
-                                                                   tags$div(
-                                                                       textInput(inputId='allocation', label='xxxxxxxxxxxxx', width = '90%' , ".5"),
-                                                                   ) 
-                                                               ) ,
                                                                
+                                                     
+                                                               
+                                                               #~~~~~~
                                                                splitLayout(
-                                                                   
-                                                                   tags$div(
-                                                                       textInput(inputId='baseline', label='xxxxxxxxxxxxx', width = '90%' , ".4"),
-                                                                   ),
-                                                                   
-                                                                   tags$div(
-                                                                       textInput(inputId='hr', label='xxxxxxxxxxxxx', width = '90%' , ".75"),
-                                                                   ) 
-                                                                   
+                                                                 
+                                                               tags$div(
+                                                                 textInput("v1", div(h5(tags$span(style="color:white", "Trt 3 arms"))), width = '90%' ,value= "1"),
+                                                               ),
+                                                               
+                                                               tags$div(
+                                                                 textInput("v2", div(h5(tags$span(style="color:white", "Age (continuous)"))), width = '90%' , value= "1/(65-18)"),
+                                                               ),
+                                                                 tags$div(
+                                                                   textInput("v3", div(h5(tags$span(style="color:white", "Smoking (factor)"))),  width = '90%' ,value= "0.4"),
+                                                                 
                                                                ) 
-                                                      ),
+                                                      ) ,
+                                                      
+                                                  
+                                                      splitLayout(
+                                                        
+                                                        tags$div(
+                                                          textInput("v4", div(h5(tags$span(style="color:white", "BMI (factor)"))),  width = '90%' ,value= "0"),
+                                                      
+                                                      ) ,
+                                                      
+
+                                                        tags$div(
+                                                          textInput("v5", div(h5(tags$span(style="color:white", "covar3 (biomarker)"))),  width = '90%' ,value= "1/3"),
+                                                        ),
+                                                        
+                                                        tags$div(
+                                                          textInput("v6", div(h5(tags$span(style="color:white", "covar1 (Blood)"))),  width = '90%' ,value= "-.5/10")
+                                                          
+                                                        ) 
+                                                        
+                                                      ) ,
+                                                      
+                                                      splitLayout(
+                                                        
+                                                        tags$div(
+                                                          textInput("v7", div(h5(tags$span(style="color:white", "Vas (cont.)"))),  width = '90%' ,value= "0.25/30"),
+                                                        ),
+                                                        
+                                                        tags$div(
+                                                          textInput("v8", div(h5(tags$span(style="color:white", "Time (cont.)"))),  width = '90%' ,value= "-.1/10"),
+                                                        ) ,
+                                                        
+                                                        
+                                                        tags$div(
+                                                          textInput("v9", div(h5(tags$span(style="color:white", "covar2 (Fitness)"))),  width = '90%' ,value= "-1/50"),
+                                                        )
+                                                        
+                                                      ) ,
+                                                    
+                                                      
+                                                      splitLayout(
+                                                        
+                                                      tags$div(
+                                                          textInput("v10", div(h5(tags$span(style="color:white", "fact1 (History)"))),  width = '90%' ,value= "log(2)"),
+                                                        ) ,
+
+                                                        tags$div(
+                                                          textInput("v11", div(h5(tags$span(style="color:white", "binary2 (Employ)"))),  width = '90%' ,value= "-log(1)"),
+                                                        ),
+                                                        
+                                                        tags$div(
+                                                          textInput("v12", div(h5(tags$span(style="color:white", "Sex (binary)"))),  width = '90%' ,value= "log(0.5)"),
+                                                        ) 
+                                                        
+                                                      ) 
+                                                               
+                                                       ),
                                                       
                                                       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                                       menuItem("Analyses",  startExpanded = FALSE,  icon = icon("bar-chart-o"),
                                                                #~~~~~~~~~~~~~~~~~~~~~~~~
-                                                               menuSubItem("Kaplan Meier (landing page)",    tabName = "OVERVIEW",  icon = icon("bar-chart-o"), selected = TRUE),
-                                                               menuSubItem("KM diagnostics",                 tabName = "RESULTS2",  icon = icon("bar-chart-o")),
-                                                               menuSubItem("Cox proportional hazards",       tabName = "RESULTS3",  icon = icon("bar-chart-o")),
-                                                               menuSubItem("Cox PH Explanation",             tabName = "HELP",      icon = icon("bar-chart-o"), selected = FALSE),
-                                                               menuSubItem("Hazard ratio over time",         tabName = "RESULTS4",  icon = icon("bar-chart-o")),
-                                                               menuSubItem("Partial log likelihood",         tabName = "RESULTS1",  icon = icon("table")),
+                                                               menuSubItem("xxxxxxxxxxxx(landing page)",    tabName = "OVERVIEW",  icon = icon("bar-chart-o"), selected = TRUE),
+                                                               menuSubItem("xxxxxxxxxxxx",         tabName = "RESULTS2",  icon = icon("bar-chart-o")),
+                                                               menuSubItem("xxxxxxxxxxxx",         tabName = "RESULTS3",  icon = icon("bar-chart-o")),
+                                                               menuSubItem("xxxxxxxxxxxx",         tabName = "HELP",      icon = icon("bar-chart-o"), selected = FALSE),
+                                                               menuSubItem("xxxxxxxxxxxx",         tabName = "RESULTS4",  icon = icon("bar-chart-o")),
+                                                               menuSubItem("xxxxxxxxxxxx",         tabName = "RESULTS1",  icon = icon("table")),
                                                                #~~~~~~~~~~~~~~~~~~~~~~~~
                                                                menuSubItem("Only ranks of event times needed!", tabName = "OVERVIEW2",  icon = icon("bar-chart-o"), selected = FALSE),
                                                                #~~~~~~~~~~~~~~~~~~~~~~~~
@@ -253,34 +305,26 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                                       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                                       menuItem("References", icon = icon("bar-chart-o"),
                                                                
-                                                               menuSubItem(h5(HTML( "xxxxxxxxxxxxx")),  
+                                                               menuSubItem(h5(HTML( "[1] Andrew Gelman")),  
                                                                            icon = icon("send",lib='glyphicon'), 
-                                                                           href = "http://www.stat.cmu.edu/~ryantibs/journalclub/cox_1972.pdf"),
+                                                                           href = "https://statmodeling.stat.columbia.edu/2018/03/15/need-16-times-sample-size-estimate-interaction-estimate-main-effect/"),
                                                                
-                                                               menuSubItem(h5(HTML( "xxxxxxxxxxxxx")),
+                                                               menuSubItem(h5(HTML( "[2] Frank Harrell...much more here")),
                                                                            icon = icon("send",lib='glyphicon'), 
-                                                                           href = "https://jme.bmj.com/content/medethics/31/12/703.full.pdf") ,
+                                                                           href = "https://www.fharrell.com/post/varyor/") ,
                                                                #dashboardHeader(title = h4(HTML("This title<br/>is just way too long")))
                                                                
-                                                               menuSubItem( h5(HTML("xxxxxxxxxxxxx")),  
+                                                               menuSubItem( h5(HTML("[3] Responder non responder fallacy")),  
                                                                             icon = icon("send",lib='glyphicon'), 
-                                                                            href = "https://understandinguncertainty.org/node/759"),
+                                                                            href = "https://eamonn.shinyapps.io/responder-non-responder-fallacy-in-RCTs/"),
                                                                
-                                                               menuSubItem( h5(HTML("xxxxxxxxxxxxx")),  
+                                                               menuSubItem( h5(HTML("[4] Andrew Gelman")),  
                                                                             icon = icon("send",lib='glyphicon'), 
-                                                                            href = "https://github.com/eamonn2014/PARTIAL-LIKELIHOOD-METHOD/blob/master/Analysis%20of%20time-to-event%20for%20observational%20studies.pdf"),
+                                                                            href = "https://projecteuclid.org/download/pdfview_1/euclid.aoas/1231424214") 
                                                                
-                                                               menuSubItem( h5(HTML("xxxxxxxxxxxxx")),  
-                                                                            icon = icon("send",lib='glyphicon'), 
-                                                                            href = "https://influentialpoints.com/Training/coxs_proportional_hazards_regression_model-principles-properties-assumptions.htm"),
                                                                
-                                                               menuSubItem( h5(HTML("xxxxxxxxxxxxx")),  
-                                                                            icon = icon("send",lib='glyphicon'), 
-                                                                            href = "https://rdrr.io/cran/rms/man/cph.html"),
+                                                                
                                                                
-                                                               menuSubItem( h5(HTML("xxxxxxxxxxxxx")),  
-                                                                            icon = icon("send",lib='glyphicon'), 
-                                                                            href = "https://thestatsgeek.com/2014/03/28/interpreting-changes-in-hazard-and-hazard-ratios")
                                                                
                                                                
                                                                #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -311,7 +355,7 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                           ),
                           
                           fluidRow(
-                              valueBoxOutput("value1")
+                               valueBoxOutput("value1")
                               ,valueBoxOutput("value2")
                               ,valueBoxOutput("value3")
                           ),
@@ -329,8 +373,53 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                                 ,solidHeader = TRUE 
                                                 ,collapsible = TRUE 
                                                 
-                                                ,p("xxxxxxxxxxxxx")  
+                                               , h4(paste("An explanation of the inputs and tabs")), 
+                                                h4(paste("The first input left is the sample size for patients randomly 
+                                              assigned to treatment arms in a 1:1:1 fashion.
+                                                       The second selection allows the choice of 3 designs i) a main effects model, that is a  
+                                                       no-interaction logit-additive model that assumes constancy of treatment ORs ii) 
+                                                       a model with a treatment X smoking interaction and iii) a model in which all baseline covariates interact 
+                                                       with treatment. ")),
+                                                #br(),
+                                                h4(paste("The next selection is a choice of analysis performed and presented in Table 1. 
+                                                       There are three choices once again i) a main effects model, that is a 
+                                                       no-interaction logit-additive model that assumes constancy of treatment ORs ii) 
+                                                       a model with a treatment X smoking interaction and iii) a model in which all baseline covariates interact 
+                                                       with treatment. This only impacts what is presented in Table 1 and tab 10/11.")), 
+                                                #br(),
+                                                h4(paste("Twelve input boxes follow and allow the user to specify the coefficients for treatment and 11
+                                              baseline covariates on the log odds scale.
+                                                       Note a typical change in an input variable would be unlikely to correspond to a change as large 
+                                                       as 5 on the logistic scale (which would move the probability from 0.01 to 0.50 or from 0.50 to 0.99) [4].
+                                                       Age in years is uniformly distributed between 18 and 65. covar3 is uniformly distributed
+                                                       between 0 to 3, covar1 uniformly distributed between 0 to 10, vas between 1 to 30 and time in years uniformly
+                                                       distributed between 0 to 10. Smoking and BMI are 3 level factors and fact1, binary2 and sex are binary factors.
+                                                       For the factors the coefficient entered describes the true relationship between all adjacent levels. We also 
+                                                       add labels to the variables and they appear on some of the outputs."  )), 
+                                                h4(paste("Click the simulate button to generate another data set from the same population.")),
+                                                h4(paste("Tab 1 presents the regression table of the 3 models, the particular model can be selected. ")),
+                                                h4(paste("Tab 2 presents the regression table of the 
+                                                        no-interaction logit-additive model that assumes constancy of treatment ORs and provides an explanation.
+                                                        ")),
+                                                h4(paste("Tab 3 presents the a forest plot of the no-interaction logit-additive model that assumes constancy of treatment ORs plus 
+                                                       a table of the ORs and log odds ratios.")),
+                                                h4(paste("Tab 4 presents the likelihood ratio test assessing each model with each other.")),
                                                 
+                                                h4(paste("Tab 5 presents the forest plots by treatment for the treatment interacting with all baseline covariates model plus 
+                                                       tables of the ORs and log odds ratios and the regression tables. We allow the user to adjust reference levels 
+                                                       and the range for which continuous predictor effects are estimated and presented. 
+                                                       For good measure we also describe a couple of the estimated regression coefficients.")),
+                                                h4(paste("Tab 6 presents the forest plots by treatment for the treatment x smoking interaction model and 
+                                                       tables of the ORs and log odds ratios.")),
+                                                h4(paste("Tab 7 presents relative measures of explained variation and the AIC of each model is reported.")),
+                                                h4(paste("Tab 8 tab presents anova table and dot plot.")),
+                                                h4(paste("Tab 9 tab presents double differences on the log odds scale (ie. the interactions) .")),
+                                                
+                                                h4(paste("Tab 10 No new information is presented on this tab, but only the 3 model outputs presented together.")),
+                                                
+                                                h4(paste("The 11th  tab presents another way to estimate treatment effects with interactions using contrast statements.")),
+                                                
+                                                h4(paste("The final tab presents a listing of the simulated data and diagnostics."))
                                                 
                                                 
                                                 
@@ -784,43 +873,38 @@ server <- function(input, output) {
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # This is where a new sample is instigated and inputs converted to numeric
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # This is where a new sample is instigated 
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     random.sample <- reactive({
+      
+      foo <- input$resample
+      
+      n <- as.numeric(input$n )
+      
+      # writing like this I can write log and fraction into input boxes!
+      v1 <- as.numeric(    eval(parse(text= (input$v1)) ) )
+      v2 <- as.numeric(    eval(parse(text= (input$v2)) ) )
+      v3 <- as.numeric(    eval(parse(text= (input$v3)) ) )    
+      v4 <- as.numeric(    eval(parse(text= (input$v4)) ) )   
+      v5 <- as.numeric(    eval(parse(text= (input$v5)) ) )  
+      v6 <- as.numeric(    eval(parse(text= (input$v6)) ) ) 
+      v7 <- as.numeric(    eval(parse(text= (input$v7)) ) )
+      v8 <- as.numeric(    eval(parse(text= (input$v8)) ) )
+      v9 <- as.numeric(    eval(parse(text= (input$v9)) ) )
+      v10 <- as.numeric(    eval(parse(text= (input$v10)) ) )
+      v11 <- as.numeric(    eval(parse(text= (input$v11)) ) )
+      v12 <- as.numeric(    eval(parse(text= (input$v12)) ) )
+      
+      check =c(v1 , v2 , v3 , v4 , v5,  v6, v7,  v8 , v9 , v10 , v11 , v12  )
+      
+      return(list(
+        v1=v1, v2=v2, v3=v3, v4=v4, v5=v5, v6=v6, v7=v7, v8=v8, v9=v9, v10=v10, v11=v11, v12=v12 ,
+        check=check, n=n
         
-        foo <- input$resample
-        
-        n <- as.numeric(input$n)
-        
-        allocation <-as.numeric(input$allocation)
-        
-        hr <- as.numeric(input$hr)
-        
-        baseline <- as.numeric(input$baseline)
-        
-        ###############################################
-        
-        base <- as.numeric(input$base)
-        cens <- as.numeric(input$cens)
-        hr2 <-  as.numeric(input$hr2)
-        per <-  as.numeric(input$per)
-        per2 <-  as.numeric(input$per2)
-        ###############################################
-        
-        return(list(  
-            
-            n=n,
-            allocation =allocation,
-            hr=hr,
-            baseline=baseline,
-            
-            base =  base,
-            cens =  cens,
-            hr2  =  hr2,
-            per=per,
-            per2=per2
-            
-        ))
-        
+      ))
     })
+    
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # start of power section
