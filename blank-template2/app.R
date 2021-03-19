@@ -1,5 +1,5 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# dashboard template
+# blank-template2.app
 # load the required packages
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -84,8 +84,6 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                                       
                                                       id = "tabs",
                                                       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                                       
-                                                      
                                                       br(),
                                                       tags$head(
                                                           tags$style(HTML('#resample{background-color:palegreen}'))
@@ -94,11 +92,31 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                                       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                                       
                                                       menuItem("Wiki", tabName = "Wiki",      icon = icon("bar-chart-o"), selected = FALSE),
-                                                      
-                                                      
+                                                      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                      menuItem("Models and sample size", tabName = "models",      icon = icon("bar-chart-o"), 
+                                                               
+                                                               textInput('n',
+                                                                         div(h5(tags$span(style="color:yellow", "Sample size"))), value= "1000"),
+                                                               
+                                                               selectInput("Design",
+                                                                           div(h5(tags$span(style="color:yellow", "Select design preference:"))),
+                                                                           
+                                                                           choices=c(  "No-interaction logit-additive model", 
+                                                                                       "Treatment interacts with smoking only" ,
+                                                                                       "Treatment interacts with all variables" 
+                                                                           ), width='98%'),
+                                                               
+                                                               selectInput("Model",
+                                                                           div(h5(tags$span(style="color:yellow", "Select modelling preference (impacts Table x & tab x & x):"))),
+                                                                           choices=c(  "No-interaction logit-additive model",
+                                                                                       "Treatment interacts with smoking only" ,
+                                                                                       "Treatment interacts with all variables"
+                                                                           ), width='98%'),
+                                                               
+                                                               selected = FALSE),
+                                                      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                                       menuItem("Define parameters ", icon = icon("bar-chart-o"),
                                                                
-                                                     
                                                                
                                                                #~~~~~~
                                                                splitLayout(
@@ -202,6 +220,28 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                                       #
                                                       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                                       menuItem("Change in hazard",  startExpanded = FALSE,    icon = icon("table")  ,
+                                                               
+                                                               
+                                                               
+                                                               splitLayout(
+                                                                 textInput("age.range", div(h5(tags$span(style="color:yellow", "Age (continuous)"))), value= "30, 54"),
+                                                                 textInput("biomarker.range", div(h5(tags$span(style="color:yellow", "covar3 (biomarker)"))), value= "0.7675, 2.2300"),  #18
+                                                                 textInput("blood.range", div(h5(tags$span(style="color:yellow", "covar1 (Blood score)"))), value= "2.5700, 7.7525")
+                                                                 
+
+                                                               ),
+                                                               splitLayout(
+                                                                  
+                                                                 textInput("vas.range", div(h5(tags$span(style="color:yellow", "Vas (continuous)"))), value= "18, 23"),  #1
+                                                                 textInput("time.range", div(h5(tags$span(style="color:yellow", "Time (continuous)"))), value= "2.355, 7.420"),
+                                                                 textInput("fitness.range", div(h5(tags$span(style="color:yellow", "covar2 (Fitness score)"))), value= "13, 38")
+                                                                 
+                                                               ),
+                                                               
+                                                               
+                                                               
+                                                               
+                                                               
                                                                
                                                                tags$div(
                                                                    textInput(inputId="base", label='Enter xxxxxxxxxxxxx', width = '90%' , value="0.03"),
@@ -445,13 +485,14 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                               ,solidHeader = TRUE 
                                               ,collapsible = TRUE ,
                                               # ,plotlyOutput("plot1", height = "720px"),
-                                              
+                                             # h4(htmlOutput("textWithNumber2",) ),
                                               #  h5(textOutput("Staff_name")),
                                               # h5(textOutput("Staff_name3")),
                                               #h5(textOutput("Staff_name4")),
                                               #h5(textOutput("Staff_name5")),
-                                              
-                                              tags$a(href = "https://www.youtube.com/watch?v=EoIB_Obddrk&t=327s&ab_channel=RMSRegression", tags$span(style="color:blue", "xxxxxxxxxxxxx"),),
+                                             div( verbatimTextOutput("user") ),
+                                              tags$a(href = "https://www.youtube.com/watch?v=EoIB_Obddrk&t=327s&ab_channel=RMSRegression",
+                                                     tags$span(style="color:blue", "xxxxxxxxxxxxx"),),
                                               div(p(" "))
                                               
                                               
@@ -461,8 +502,66 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                               title='xxxxxxxxxxxxx'
                                               ,status = "primary"
                                               ,solidHeader = TRUE 
-                                              ,collapsible = TRUE 
+                                              ,collapsible = TRUE ,
                                               #,plotOutput("plot2", height = "720px")
+                                              
+                                              
+                                              splitLayout(
+                                                textInput("age.range", div(h5(tags$span(style="color:black", "Age (continuous)"))), value= "30, 54"),
+                                                textInput("biomarker.range", div(h5(tags$span(style="color:black", "covar3 (biomarker)"))), value= "0.7675, 2.2300"),  #18
+                                                textInput("blood.range", div(h5(tags$span(style="color:black", "covar1 (Blood score)"))), value= "2.5700, 7.7525")
+                                                
+                                                
+                                              ),
+                                              splitLayout(
+                                                
+                                                textInput("vas.range", div(h5(tags$span(style="color:black", "Vas (continuous)"))), value= "18, 23"),  #1
+                                                textInput("time.range", div(h5(tags$span(style="color:black", "Time (continuous)"))), value= "2.355, 7.420"),
+                                                textInput("fitness.range", div(h5(tags$span(style="color:black", "covar2 (Fitness score)"))), value= "13, 38")
+                                                
+                                              ),
+                                              
+                                              h4(paste("The boxes below can be used to adjust the factor reference levels (affecting forest plot and presentation of treatment effects at very bottom). The continuous variables are held at sensible values (we did not center the continuous variables in the regression). 
+                                       Set the continuous to zero and observe the treatment comparison confidence intervals. Only the treatment bars will change as treatment interacts with all variables. ")),
+                                              
+                                              splitLayout(
+                                                textInput("adj.smoking", div(h5(tags$span(style="color:blue", "Smoking ref (factor)"))), value= "1"),
+                                                textInput("adj.age", div(h5(tags$span(style="color:blue", "Age (continuous)"))), value= "40"),  #18
+                                                textInput("adj.biomarker", div(h5(tags$span(style="color:blue", "covar3 (biomarker)"))), value=  "1.3"),
+                                                textInput("adj.blood", div(h5(tags$span(style="color:blue", "covar1 (Blood score)"))), value= "5"),
+                                                textInput("adj.vas", div(h5(tags$span(style="color:blue", "Vas (continuous)"))), value= "17"),  #1
+                                                textInput("adj.time", div(h5(tags$span(style="color:blue", "Time (continuous)"))), value= "4")
+                                                
+                                              ),
+                                              
+                                              splitLayout(
+                                                
+                                                
+                                                textInput("adj.fitness", div(h5(tags$span(style="color:blue", "covar2 (Fitness score)"))), value= "20"),  #1
+                                                textInput("adj.history", div(h5(tags$span(style="color:blue", "fact1 ref (History binary)"))), value= "0"),
+                                                textInput("adj.employed", div(h5(tags$span(style="color:blue", "binary2 ref (Employed)"))), value= "0"),
+                                                textInput("adj.sex", div(h5(tags$span(style="color:blue", "Sex red (binary)"))), value= "0"),
+                                                textInput("adj.BMI", div(h5(tags$span(style="color:blue", "BMI ref (factor)"))), value= "1")
+                                                
+                                                
+                                              ),
+                                              
+                                              
+                                              
+                                              
+                                              
+                                              
+                                              
+                                              
+                                              
+                                              
+                                              
+                                              
+                                              
+                                              
+                                              
+                                              
+                                              
                                           ))),               
                               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                               tabItem("OVERVIEW2",
@@ -907,73 +1006,278 @@ server <- function(input, output) {
     
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # start of power section
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    power <- reactive({
-        
-        foo <- input$resample
-        
-        ss <- as.numeric(unlist(strsplit(input$ss,",")))
-        
-        ss2x <- as.numeric(unlist(strsplit(input$ss2,",")))
-        
-        tt <- as.numeric(unlist(strsplit(input$tt,",")))
-        
-        af <- as.numeric(unlist(strsplit(input$af,",")))  
-        
-        af2 <- as.numeric(unlist(strsplit(input$af2,","))) 
-        
-        hrx <- as.numeric(unlist(strsplit(input$hrx,",")))
-        
-        nonc <- as.numeric(unlist(strsplit(input$t2,",")))
-        
-        sim <- as.numeric(unlist(strsplit(input$sim,",")))
-        
-        return(list(  
-            
-            ss1=ss[1],
-            ss2=ss[2],
-            prob1=ss2x[1],
-            prob2=ss2x[2],
-            
-            nc=tt[1],
-            ni=tt[2],
-            
-            AA=af[1],
-            FF=af2[1],
-            
-            hrx=hrx[1],
-            
-            nonc=nonc[1],
-            
-            sim=sim[1]
-            
-        ))
-        
+    randomness <- reactive({
+      
+      n <- as.numeric(input$n )
+      randomi <- runif(n)
+      
+      return(list(
+        randomi=randomi
+      ))
+      
     })
+    
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    design <- reactive({
+      
+      randomi <- randomness()$randomi
+      
+      sample <- random.sample()
+      
+      n <- as.numeric(input$n )
+      v1 <- as.numeric(    eval(parse(text= (input$v1)) ) )
+      v2 <- as.numeric(    eval(parse(text= (input$v2)) ) )
+      v3 <- as.numeric(    eval(parse(text= (input$v3)) ) )    
+      v4 <- as.numeric(    eval(parse(text= (input$v4)) ) )   
+      v5 <- as.numeric(    eval(parse(text= (input$v5)) ) )  
+      v6 <- as.numeric(    eval(parse(text= (input$v6)) ) ) 
+      v7 <- as.numeric(    eval(parse(text= (input$v7)) ) )
+      v8 <- as.numeric(    eval(parse(text= (input$v8)) ) )
+      v9 <- as.numeric(    eval(parse(text= (input$v9)) ) )
+      v10 <- as.numeric(    eval(parse(text= (input$v10)) ) )
+      v11 <- as.numeric(    eval(parse(text= (input$v11)) ) )
+      v12 <- as.numeric(    eval(parse(text= (input$v12)) ) )
+      
+      trt.coef       <-  v1     # log odds ratio so 1 -> 2.718, so 1 is LARGE
+      age.coef       <-  v2     # log odds of 1 over the age range
+      smoke.coef     <-  v3     # this is odds of 1.5
+      bmi.coef       <-  v4     # this is an odds of 1..50:50
+      covar3.coef    <-  v5     # log odds 1 over range of 3
+      covar1.coef    <-  v6     # log odds -.05 per unit change
+      vas.coef       <-  v7     # log odds .008 per unit change. log odds .25 over 30 units odds 1.27
+      time.coef      <-  v8     # log odds -.01 per year, log odds -.1 over 10 years or odds .90
+      covar2.coef    <-  v9     # log odds 0.02 per joint, log odds 1 over 50 units or odds 2.7
+      fact1.coef     <-  v10    # log odds 0.693 per change in binary, or odds of 2   
+      binary2.coef   <-  v11    # log odds 0 per change in binary, or odds of 1  
+      sex.coef       <-  v12    # log odds -0.693 per change in binary, or odds of .5  
+      
+      intercept <- -5
+      
+      trt      <- sample(1:3,   n, replace=TRUE)      # trt 3 levels
+      age      <- sample(18:65, n, replace=TRUE)      # continuous
+      bmi      <- sample(1:3,   n, replace=TRUE)      # assume 3 equal groups?
+      smoking  <- sample(1:3,   n, replace=TRUE)      # categorical assume 3 equal groups?
+      covar3   <- round(runif(n,0,3),2)
+      covar1   <- round(runif(n,0,10),2)
+      vas      <- sample(1:30, n, replace=TRUE)
+      time     <- round(runif(n,0,10),2)              # years
+      covar2   <- sample(1:50, n, replace=TRUE)
+      fact1    <- sample(0:1,  n, replace=TRUE)
+      binary2  <- sample(0:1,  n, replace=TRUE)
+      sex      <- sample(0:1,  n, replace=TRUE)
+      
+      return(list(    
+        
+        trt.coef       =trt.coef ,
+        age.coef       =age.coef,
+        smoke.coef     =smoke.coef,
+        bmi.coef       =bmi.coef,
+        covar3.coef    =covar3.coef,
+        covar1.coef    =covar1.coef,
+        vas.coef       =vas.coef,
+        time.coef      =time.coef,
+        covar2.coef    =covar2.coef,
+        fact1.coef     =fact1.coef,
+        binary2.coef   =binary2.coef,
+        sex.coef       =sex.coef,
+        
+        trt= trt, 
+        age=age, 
+        bmi=bmi, 
+        smoking=smoking,
+        covar3=covar3,
+        covar1=covar1, 
+        vas=vas, 
+        time=time, 
+        covar2=covar2, 
+        fact1=fact1 , 
+        binary2=binary2, 
+        sex=sex,
+        
+        randomi=randomi))
+      
+      
+    })    
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    power1 <- reactive({
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    lp1 <- reactive({
+      
+      d <- design()
+      
+      trt      <-d$trt      
+      age      <-d$age       
+      bmi      <-d$bmi       
+      smoking  <-d$smoking  
+      covar3      <-d$covar3      
+      covar1   <-d$covar1   
+      vas      <-d$vas       
+      time     <-d$time      
+      covar2   <-d$covar2    
+      fact1    <-d$fact1     
+      binary2 <-d$binary2  
+      sex      <-d$sex  
+      
+      trt.coef      =d$trt.coef 
+      age.coef      =d$age.coef
+      smoke.coef    =d$smoke.coef
+      bmi.coef      =d$bmi.coef
+      covar3.coef      =d$covar3.coef
+      covar1.coef   =d$covar1.coef
+      vas.coef      =d$vas.coef
+      time.coef     =d$time.coef
+      covar2.coef   =d$covar2.coef
+      fact1.coef    =d$fact1.coef
+      binary2.coef =d$binary2.coef
+      sex.coef      =d$sex.coef
+      
+      randomi <- d$randomi
+      intercept <- -3
+      
+      
+      if ( (input$Design) == "Treatment interacts with all variables" )  {
         
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        return(list(x=x, f=ff.dropout , f1=f1, fit=fit)) 
+        lp = intercept + trt*trt.coef*(smoking*smoke.coef   +   age*age.coef  + bmi*bmi.coef + covar3*covar3.coef +
+                                         covar1*covar1.coef + vas*vas.coef + time*time.coef + covar2*covar2.coef +
+                                         fact1*fact1.coef +
+                                         binary2*binary2.coef + sex*sex.coef) 
         
+      }   else if ( (input$Design ) == "Treatment interacts with smoking only" ) {    
         
+        # truth  only smoking interacts  with trt
+        lp = intercept + (trt*trt.coef*smoking*smoke.coef)   +   age*age.coef   + bmi*bmi.coef + covar3*covar3.coef +
+          covar1*covar1.coef + vas*vas.coef + time*time.coef + covar2*covar2.coef + fact1*fact1.coef +
+          binary2*binary2.coef + sex*sex.coef
+        
+      }   else if ( (input$Design) == "No-interaction logit-additive model" ) {  
+        
+        # truth no interactions
+        lp = intercept + trt*trt.coef + smoking*smoke.coef + age*age.coef  + bmi*bmi.coef + covar3*covar3.coef +
+          covar1*covar1.coef + vas*vas.coef + time*time.coef + covar2*covar2.coef + fact1*fact1.coef +
+          binary2*binary2.coef + sex*sex.coef
+      }
+      
+      
+      y <- ifelse(randomi < plogis(lp), 1, 0)   # one liner RANDOM!!!
+      
+      dat <- data.frame(cbind(y,  trt ,  smoking, age, covar3, covar1, vas, time, covar2, fact1, binary2, sex, bmi))
+      
+      return(list(datx=dat))
+      
+    })
+    
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    analysis <- reactive({
+      
+      da <- lp1()$datx 
+      
+      da$trt <-     factor(da$trt)
+      da$smoking <- factor(da$smoking)
+      da$fact1 <-   factor(da$fact1)
+      da$binary2 <-factor(da$binary2)
+      da$sex <-     factor(da$sex)
+      da$bmi <-     factor(da$bmi)
+      
+      label(da$age)                <- 'Age'                       # label is in Hmisc
+      label(da$trt)                <- 'Treatment'
+      label(da$bmi)                <- 'Body Mass Index'
+      label(da$smoking)            <- 'Smoking'
+      label(da$covar3)             <- 'Biomarker'
+      label(da$covar1)             <- 'Blood score'
+      label(da$vas)                <- 'Visual analogue score'
+      label(da$time)               <- 'Time since diagnosis'
+      label(da$covar2)             <- 'Fitness score'
+      label(da$fact1)              <- "History"
+      label(da$binary2)            <- "Employed"
+      label(da$sex)                <- 'Sex'
+      
+      dd <<- datadist(da)
+      options(datadist="dd")
+      
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      # user can change the range at which effects are estimated
+      
+      Ages <-   (as.numeric(unlist(strsplit(input$age.range,","))))    
+      
+      dd$limits$age[1] <<- Ages[1]
+      dd$limits$age[3] <<- Ages[2]
+      
+      Ages <-   (as.numeric(unlist(strsplit(input$biomarker.range,","))))    
+      
+      dd$limits$covar3[1] <<- Ages[1]
+      dd$limits$covar3[3] <<- Ages[2]
+      
+      Ages <-   (as.numeric(unlist(strsplit(input$blood.range,","))))    
+      
+      dd$limits$covar1[1] <<- Ages[1]
+      dd$limits$covar1[3] <<- Ages[2]
+      
+      
+      Ages <-   (as.numeric(unlist(strsplit(input$vas.range,","))))    
+      
+      dd$limits$vas[1] <<- Ages[1]
+      dd$limits$vas[3] <<- Ages[2]
+      
+      Ages <-   (as.numeric(unlist(strsplit(input$time.range,","))))    
+      
+      dd$limits$time[1] <<- Ages[1]
+      dd$limits$time[3] <<- Ages[2]
+      
+      
+      Ages <-   (as.numeric(unlist(strsplit(input$fitness.range,","))))    
+      
+      dd$limits$covar2[1] <<- Ages[1]
+      dd$limits$covar2[3] <<- Ages[2]
+      
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
+      A<-lrm(y~   trt * (smoking  + age  + bmi + covar3 + covar1 + vas + time + covar2 + fact1 + binary2 +sex),da, y=TRUE, x=TRUE)   # all interact with trt
+      B<-lrm(y~  (trt *  smoking) + age  + bmi + covar3 + covar1 + vas + time + covar2 + fact1 + binary2 +sex, da, y=TRUE, x=TRUE)   # smoking * trt only
+      C<-lrm(y~   trt +  smoking  + age +  bmi + covar3 + covar1 + vas + time + covar2 + fact1 + binary2 +sex, da, y=TRUE, x=TRUE)   # main effect
+      
+      outputx <- input$Model 
+      
+      if (  (outputx) == "Treatment interacts with all variables" )  {
+        f <- A
+        
+      }   else if (  (outputx) == "Treatment interacts with smoking only" ) {
+        
+        f <- B
+        
+      }   else if (  (outputx) == "No-interaction logit-additive model" ) {
+        
+        f <- C
+      }
+      
+      da$trt <- relevel(da$trt, "2")
+      Aref2 <- lrm(y~   trt * (smoking  + age  + bmi + covar3 + covar1 + vas + time + covar2 + fact1 + binary2 +sex),da, y=TRUE, x=TRUE)   # all interact with trt
+      da$trt <- relevel(da$trt, "3")
+      Aref3 <- lrm(y~   trt * (smoking  + age  + bmi + covar3 + covar1 + vas + time + covar2 + fact1 + binary2 +sex),da, y=TRUE, x=TRUE)   # all interact with trt
+      
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      return(list(  A=A, B=B, C=C, f=f, outputx=outputx, Aref2 = Aref2, Aref3 = Aref3)) 
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
     })
     
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    # estimating hazard plot
-    output$powerp1 <-renderPlot({     
-        
-    })
+    output$textWithNumber2 <- renderText({ 
+      
+      txt <- analysis()
+      HTML(paste0("Table 1. ", tags$span(style="color:black", txt$outputx  )
+      ))    
+      
+    })  
+    
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    output$powerp3w <- output$powerp3 <-renderPlotly({     
-        
-    })
+    output$user <- renderPrint({
+      return(print(analysis()$f, digits=3))
+    }) 
     
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
