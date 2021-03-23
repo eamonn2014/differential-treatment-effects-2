@@ -566,7 +566,7 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                             ,solidHeader = TRUE 
                                             ,collapsible = TRUE ,
                                           
-                                            div(plotOutput("f.plot3", width=fig.height1, height=580)),   
+                                            div(plotOutput("f.plot3", width=fig.height1, height=615)),   
                                             
                                             div(p(" "))
                                             
@@ -1456,8 +1456,8 @@ server <- function(input, output) {
       
       A <- X$C
       
-      par(oma=c(3,4,1,1))
-      
+     # par(oma=c(3,4,1,1))
+      par(oma=c(0,1,1,1))
       options(digits=1)
       
       
