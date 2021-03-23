@@ -23,6 +23,28 @@ library(DT)
 library(survival)
 options(max.print=1000000)    
 
+
+fig.width <- 400
+fig.height <- 300
+fig.width1 <- 1380
+fig.height1 <- 700
+fig.width2 <- 1400
+fig.height2 <- 300
+fig.width3 <- 1400  
+fig.height3 <- 600
+fig.width4 <- 1380
+fig.height4 <- 450
+fig.width5 <- 1380
+fig.height5 <- 225
+fig.width6 <- 400
+fig.height6 <- 550
+fig.width7 <- 600
+fig.widthx <- 593
+fig.heightx <- 268
+fig.height7 <- 600
+fig.width9 <- 1380
+fig.height9 <- 679
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # function to format 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -193,9 +215,9 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                                       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                                       menuItem("Analyses",  startExpanded = FALSE,  icon = icon("bar-chart-o"),
                                                                #~~~~~~~~~~~~~~~~~~~~~~~~
-                                                               menuSubItem("xxxxxxxxxxxx(landing page)",    tabName = "OVERVIEW",  icon = icon("bar-chart-o"), selected = TRUE),
-                                                               menuSubItem("xxxxxxxxxxxx",         tabName = "RESULTS2",  icon = icon("bar-chart-o")),
-                                                               menuSubItem("xxxxxxxxxxxx",         tabName = "RESULTS3",  icon = icon("bar-chart-o")),
+                                                               menuSubItem("main(landing page)",    tabName = "OVERVIEW",  icon = icon("bar-chart-o"), selected = TRUE),
+                                                               menuSubItem("trt x smoking",         tabName = "RESULTS2",  icon = icon("bar-chart-o")),
+                                                               menuSubItem("trt x all",         tabName = "RESULTS3",  icon = icon("bar-chart-o")),
                                                                menuSubItem("xxxxxxxxxxxx",         tabName = "HELP",      icon = icon("bar-chart-o"), selected = FALSE),
                                                                menuSubItem("xxxxxxxxxxxx",         tabName = "RESULTS4",  icon = icon("bar-chart-o")),
                                                                menuSubItem("xxxxxxxxxxxx",         tabName = "RESULTS1",  icon = icon("table")),
@@ -479,90 +501,141 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                               tabItem("OVERVIEW",
                                       fluidRow(
+                                        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                           box(
-                                              title = "xxxxxxxxxxxxx"
+                                              title = "No-interaction logit-additive model that assumes constancy of treatment ORs"
                                               ,status = "primary"
                                               ,solidHeader = TRUE 
                                               ,collapsible = TRUE ,
-                                              # ,plotlyOutput("plot1", height = "720px"),
-                                             # h4(htmlOutput("textWithNumber2",) ),
-                                              #  h5(textOutput("Staff_name")),
-                                              # h5(textOutput("Staff_name3")),
-                                              #h5(textOutput("Staff_name4")),
-                                              #h5(textOutput("Staff_name5")),
+                                               collapsed=TRUE,
+                                             # background = "white",
+                                              width = 6,
+                                              
                                              div( verbatimTextOutput("user") ),
                                               tags$a(href = "https://www.youtube.com/watch?v=EoIB_Obddrk&t=327s&ab_channel=RMSRegression",
                                                      tags$span(style="color:blue", "xxxxxxxxxxxxx"),),
                                               div(p(" "))
-                                              
-                                              
+
+                                          )
+                                          #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                           , box(  width=6, 
+                                                title='Wiki'
+                                                ,status = "primary"
+                                                ,solidHeader = TRUE 
+                                                ,collapsible = TRUE , 
+                                                 collapsed=TRUE,
+                                                
+                                                h4(paste("An explanation of the inputs and tabs")), 
+                                                h4(paste("The first input left is the sample size for patients randomly 
+                                              assigned to treatment arms in a 1:1:1 fashion.
+                                                       The second selection allows the choice of 3 designs i) a main effects model, that is a  
+                                                       no-interaction logit-additive model that assumes constancy of treatment ORs ii) 
+                                                       a model with a treatment X smoking interaction and iii) a model in which all baseline covariates interact 
+                                                       with treatment. ")),
+                                                #br(),
+                                                h4(paste("The next selection is a choice of analysis performed and presented in Table 1. 
+                                                       There are three choices once again i) a main effects model, that is a 
+                                                       no-interaction logit-additive model that assumes constancy of treatment ORs ii) 
+                                                       a model with a treatment X smoking interaction and iii) a model in which all baselin
+                                                       e covariates interact 
+                                                       with treatment. This only impacts what is presented in Table 1 and tab 10/11.")), 
+                                             
+                                                
+                                                h4(paste("xxxxxxxxxxxxxxxxxxxx")), 
+                                                
+                                                h4(paste("
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         ")), 
+                                                
+                                                
                                           )
                                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                           ,box(
-                                              title='xxxxxxxxxxxxx'
-                                              ,status = "primary"
-                                              ,solidHeader = TRUE 
-                                              ,collapsible = TRUE ,
-                                              #,plotOutput("plot2", height = "720px")
-                                              
-                                              
-                                              splitLayout(
-                                                textInput("age.range", div(h5(tags$span(style="color:black", "Age (continuous)"))), value= "30, 54"),
-                                                textInput("biomarker.range", div(h5(tags$span(style="color:black", "covar3 (biomarker)"))), value= "0.7675, 2.2300"),  #18
-                                                textInput("blood.range", div(h5(tags$span(style="color:black", "covar1 (Blood score)"))), value= "2.5700, 7.7525")
-                                                
-                                                
-                                              ),
-                                              splitLayout(
-                                                
-                                                textInput("vas.range", div(h5(tags$span(style="color:black", "Vas (continuous)"))), value= "18, 23"),  #1
-                                                textInput("time.range", div(h5(tags$span(style="color:black", "Time (continuous)"))), value= "2.355, 7.420"),
-                                                textInput("fitness.range", div(h5(tags$span(style="color:black", "covar2 (Fitness score)"))), value= "13, 38")
-                                                
-                                              ),
-                                              
-                                              h4(paste("The boxes below can be used to adjust the factor reference levels (affecting forest plot and presentation of treatment effects at very bottom). The continuous variables are held at sensible values (we did not center the continuous variables in the regression). 
-                                       Set the continuous to zero and observe the treatment comparison confidence intervals. Only the treatment bars will change as treatment interacts with all variables. ")),
-                                              
-                                              splitLayout(
-                                                textInput("adj.smoking", div(h5(tags$span(style="color:blue", "Smoking ref (factor)"))), value= "1"),
-                                                textInput("adj.age", div(h5(tags$span(style="color:blue", "Age (continuous)"))), value= "40"),  #18
-                                                textInput("adj.biomarker", div(h5(tags$span(style="color:blue", "covar3 (biomarker)"))), value=  "1.3"),
-                                                textInput("adj.blood", div(h5(tags$span(style="color:blue", "covar1 (Blood score)"))), value= "5"),
-                                                textInput("adj.vas", div(h5(tags$span(style="color:blue", "Vas (continuous)"))), value= "17"),  #1
-                                                textInput("adj.time", div(h5(tags$span(style="color:blue", "Time (continuous)"))), value= "4")
-                                                
-                                              ),
-                                              
-                                              splitLayout(
-                                                
-                                                
-                                                textInput("adj.fitness", div(h5(tags$span(style="color:blue", "covar2 (Fitness score)"))), value= "20"),  #1
-                                                textInput("adj.history", div(h5(tags$span(style="color:blue", "fact1 ref (History binary)"))), value= "0"),
-                                                textInput("adj.employed", div(h5(tags$span(style="color:blue", "binary2 ref (Employed)"))), value= "0"),
-                                                textInput("adj.sex", div(h5(tags$span(style="color:blue", "Sex red (binary)"))), value= "0"),
-                                                textInput("adj.BMI", div(h5(tags$span(style="color:blue", "BMI ref (factor)"))), value= "1")
-                                                
-                                                
-                                              ),
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              
-                                          ))),               
+                                            title = "Forest plot, No-interaction logit-additive model"
+                                            ,status = "primary"
+                                            ,solidHeader = TRUE 
+                                            ,collapsible = TRUE ,
+                                          
+                                            div(plotOutput("f.plot3", width=fig.height1, height=580)),   
+                                            
+                                            div(p(" "))
+                                            
+                                          )
+                                          #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                          
+                                          ,box(
+                                            title = "No-interaction logit-additive model summary"
+                                            ,status = "primary"
+                                            ,solidHeader = TRUE 
+                                            ,collapsible = TRUE ,
+                                           
+                                            div( verbatimTextOutput("int.trt1C" ) ),
+                                            
+                                            div(p(" "))
+                                            
+                                          )
+                                           
+                                           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                       #    ,box(
+                                       #        title='xxxxxxxxxxxxx'
+                                       #        ,status = "primary"
+                                       #        ,solidHeader = TRUE
+                                       #        ,collapsible = TRUE ,
+                                       #        #,plotOutput("plot2", height = "720px")
+                                       # 
+                                       # 
+                                       #        splitLayout(
+                                       #          textInput("age.range", div(h5(tags$span(style="color:black", "Age (continuous)"))), value= "30, 54"),
+                                       #          textInput("biomarker.range", div(h5(tags$span(style="color:black", "covar3 (biomarker)"))), value= "0.7675, 2.2300"),  #18
+                                       #          textInput("blood.range", div(h5(tags$span(style="color:black", "covar1 (Blood score)"))), value= "2.5700, 7.7525")
+                                       # 
+                                       # 
+                                       #        ),
+                                       #        splitLayout(
+                                       # 
+                                       #          textInput("vas.range", div(h5(tags$span(style="color:black", "Vas (continuous)"))), value= "18, 23"),  #1
+                                       #          textInput("time.range", div(h5(tags$span(style="color:black", "Time (continuous)"))), value= "2.355, 7.420"),
+                                       #          textInput("fitness.range", div(h5(tags$span(style="color:black", "covar2 (Fitness score)"))), value= "13, 38")
+                                       # 
+                                       #        ),
+                                       # 
+                                       #        h4(paste("The boxes below can be used to adjust the factor reference levels (affecting forest plot and presentation of treatment effects at very bottom). The continuous variables are held at sensible values (we did not center the continuous variables in the regression).
+                                       # Set the continuous to zero and observe the treatment comparison confidence intervals. Only the treatment bars will change as treatment interacts with all variables. ")),
+                                       # 
+                                       #        splitLayout(
+                                       #          textInput("adj.smoking", div(h5(tags$span(style="color:blue", "Smoking ref (factor)"))), value= "1"),
+                                       #          textInput("adj.age", div(h5(tags$span(style="color:blue", "Age (continuous)"))), value= "40"),  #18
+                                       #          textInput("adj.biomarker", div(h5(tags$span(style="color:blue", "covar3 (biomarker)"))), value=  "1.3"),
+                                       #          textInput("adj.blood", div(h5(tags$span(style="color:blue", "covar1 (Blood score)"))), value= "5"),
+                                       #          textInput("adj.vas", div(h5(tags$span(style="color:blue", "Vas (continuous)"))), value= "17"),  #1
+                                       #          textInput("adj.time", div(h5(tags$span(style="color:blue", "Time (continuous)"))), value= "4")
+                                       # 
+                                       #        ),
+                                       # 
+                                       #        splitLayout(
+                                       # 
+                                       # 
+                                       #          textInput("adj.fitness", div(h5(tags$span(style="color:blue", "covar2 (Fitness score)"))), value= "20"),  #1
+                                       #          textInput("adj.history", div(h5(tags$span(style="color:blue", "fact1 ref (History binary)"))), value= "0"),
+                                       #          textInput("adj.employed", div(h5(tags$span(style="color:blue", "binary2 ref (Employed)"))), value= "0"),
+                                       #          textInput("adj.sex", div(h5(tags$span(style="color:blue", "Sex red (binary)"))), value= "0"),
+                                       #          textInput("adj.BMI", div(h5(tags$span(style="color:blue", "BMI ref (factor)"))), value= "1")
+                                       # 
+                                       # 
+                                       #        ),
+                                       #           )
+                                          
+                                          
+                                          )),               
                               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                               tabItem("OVERVIEW2",
                                       fluidRow(
@@ -575,14 +648,10 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                               #,h5(textOutput("info2"))
                                           )
                                           
-                                          ,box(
-                                              title="xxxxxxxxxxxxx"
-                                              ,status = "primary"
-                                              ,solidHeader = TRUE 
-                                              ,collapsible = TRUE 
-                                              #,plotlyOutput("plot5b", height = "720px"),
-                                              #h5(textOutput("info"))
-                                          ))),   
+                                      
+                                          
+                                          
+                                          )),   
                               
                               
                               tabItem("OVERVIEW3",
@@ -596,14 +665,73 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                               #,h5(textOutput("info2"))
                                           )
                                           
-                                          ,box(
-                                              title=" "
-                                              ,status = "primary"
-                                              ,solidHeader = TRUE 
-                                              ,collapsible = TRUE 
-                                              ,p("xxxxxxxxxxxxx")
+                                       ,box(
+                                            title='xxxxxxxxxxxxx'
+                                            ,status = "primary"
+                                            ,solidHeader = TRUE 
+                                            ,collapsible = TRUE ,
+                                            #,plotOutput("plot2", height = "720px")
+                                            
+                                            
+                                            splitLayout(
+                                              textInput("age.range", div(h5(tags$span(style="color:black", "Age (continuous)"))), value= "30, 54"),
+                                              textInput("biomarker.range", div(h5(tags$span(style="color:black", "covar3 (biomarker)"))), value= "0.7675, 2.2300"),  #18
+                                              textInput("blood.range", div(h5(tags$span(style="color:black", "covar1 (Blood score)"))), value= "2.5700, 7.7525")
                                               
-                                          ))),   
+                                              
+                                            ),
+                                            splitLayout(
+                                              
+                                              textInput("vas.range", div(h5(tags$span(style="color:black", "Vas (continuous)"))), value= "18, 23"),  #1
+                                              textInput("time.range", div(h5(tags$span(style="color:black", "Time (continuous)"))), value= "2.355, 7.420"),
+                                              textInput("fitness.range", div(h5(tags$span(style="color:black", "covar2 (Fitness score)"))), value= "13, 38")
+                                              
+                                            ),
+                                            
+                                            h4(paste("The boxes below can be used to adjust the factor reference levels (affecting forest plot and presentation of treatment effects at very bottom). The continuous variables are held at sensible values (we did not center the continuous variables in the regression). 
+                                       Set the continuous to zero and observe the treatment comparison confidence intervals. Only the treatment bars will change as treatment interacts with all variables. ")),
+                                            
+                                            splitLayout(
+                                              textInput("adj.smoking", div(h5(tags$span(style="color:blue", "Smoking ref (factor)"))), value= "1"),
+                                              textInput("adj.age", div(h5(tags$span(style="color:blue", "Age (continuous)"))), value= "40"),  #18
+                                              textInput("adj.biomarker", div(h5(tags$span(style="color:blue", "covar3 (biomarker)"))), value=  "1.3"),
+                                              textInput("adj.blood", div(h5(tags$span(style="color:blue", "covar1 (Blood score)"))), value= "5"),
+                                              textInput("adj.vas", div(h5(tags$span(style="color:blue", "Vas (continuous)"))), value= "17"),  #1
+                                              textInput("adj.time", div(h5(tags$span(style="color:blue", "Time (continuous)"))), value= "4")
+                                              
+                                            ),
+                                            
+                                            splitLayout(
+                                              
+                                              
+                                              textInput("adj.fitness", div(h5(tags$span(style="color:blue", "covar2 (Fitness score)"))), value= "20"),  #1
+                                              textInput("adj.history", div(h5(tags$span(style="color:blue", "fact1 ref (History binary)"))), value= "0"),
+                                              textInput("adj.employed", div(h5(tags$span(style="color:blue", "binary2 ref (Employed)"))), value= "0"),
+                                              textInput("adj.sex", div(h5(tags$span(style="color:blue", "Sex red (binary)"))), value= "0"),
+                                              textInput("adj.BMI", div(h5(tags$span(style="color:blue", "BMI ref (factor)"))), value= "1")
+                                              
+                                              
+                                            ),
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                          )
+                                          
+                                          )),   
                               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                               tabItem("RESULTS1",
                                       fluidRow(        
@@ -898,16 +1026,55 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                               ,p("xxxxxxxxxxxxx")
                                           )
                                           
-                                          ,box(width=4,
-                                               title="xxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxxxxxxx" 
-                                               ,status = "primary"
-                                               ,solidHeader = TRUE
-                                               ,collapsible = TRUE
-                                               #  ,plotlyOutput("plot99b", height = "720px")
-                                               
-                                               # ,h5(textOutput("info3"))
-                                               ,p("xxxxxxxxxxxxx")
-                                          ) 
+                                          , box(width=4,
+                                            title='xxxxxxxxxxxxx'
+                                            ,status = "primary"
+                                            ,solidHeader = TRUE 
+                                            ,collapsible = TRUE ,
+                                            #,plotOutput("plot2", height = "720px")
+                                            
+                                            
+                                            splitLayout(
+                                              textInput("age.range", div(h5(tags$span(style="color:black", "Age (continuous)"))), value= "30, 54"),
+                                              textInput("biomarker.range", div(h5(tags$span(style="color:black", "covar3 (biomarker)"))), value= "0.7675, 2.2300"),  #18
+                                              textInput("blood.range", div(h5(tags$span(style="color:black", "covar1 (Blood score)"))), value= "2.5700, 7.7525")
+                                              
+                                              
+                                            ),
+                                            splitLayout(
+                                              
+                                              textInput("vas.range", div(h5(tags$span(style="color:black", "Vas (continuous)"))), value= "18, 23"),  #1
+                                              textInput("time.range", div(h5(tags$span(style="color:black", "Time (continuous)"))), value= "2.355, 7.420"),
+                                              textInput("fitness.range", div(h5(tags$span(style="color:black", "covar2 (Fitness score)"))), value= "13, 38")
+                                              
+                                            ),
+                                            
+                                            h4(paste("The boxes below can be used to adjust the factor reference levels (affecting forest plot and presentation of treatment effects at very bottom). The continuous variables are held at sensible values (we did not center the continuous variables in the regression). 
+                                       Set the continuous to zero and observe the treatment comparison confidence intervals. Only the treatment bars will change as treatment interacts with all variables. ")),
+                                            
+                                            splitLayout(
+                                              textInput("adj.smoking", div(h5(tags$span(style="color:blue", "Smoking ref (factor)"))), value= "1"),
+                                              textInput("adj.age", div(h5(tags$span(style="color:blue", "Age (continuous)"))), value= "40"),  #18
+                                              textInput("adj.biomarker", div(h5(tags$span(style="color:blue", "covar3 (biomarker)"))), value=  "1.3"),
+                                              textInput("adj.blood", div(h5(tags$span(style="color:blue", "covar1 (Blood score)"))), value= "5"),
+                                              textInput("adj.vas", div(h5(tags$span(style="color:blue", "Vas (continuous)"))), value= "17"),  #1
+                                              textInput("adj.time", div(h5(tags$span(style="color:blue", "Time (continuous)"))), value= "4")
+                                              
+                                            ),
+                                            
+                                            splitLayout(
+                                              
+                                              
+                                              textInput("adj.fitness", div(h5(tags$span(style="color:blue", "covar2 (Fitness score)"))), value= "20"),  #1
+                                              textInput("adj.history", div(h5(tags$span(style="color:blue", "fact1 ref (History binary)"))), value= "0"),
+                                              textInput("adj.employed", div(h5(tags$span(style="color:blue", "binary2 ref (Employed)"))), value= "0"),
+                                              textInput("adj.sex", div(h5(tags$span(style="color:blue", "Sex red (binary)"))), value= "0"),
+                                              textInput("adj.BMI", div(h5(tags$span(style="color:blue", "BMI ref (factor)"))), value= "1")
+                                              
+                                              
+                                            ),   
+                                          )
+                                          
                                           
                                           ,box(width=4,
                                                title="xxxxxxxxxxxxx xxxxxxxxxxxxx" 
@@ -1282,19 +1449,52 @@ server <- function(input, output) {
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    output$powerp2 <- renderPrint({  # renderText not so useful
-        
-        
-        
+    
+    output$f.plot3 <- renderPlot({
+      
+      X <- analysis()
+      
+      A <- X$C
+      
+      par(oma=c(3,4,1,1))
+      
+      options(digits=1)
+      
+      
+      plot(summary(A, smoking=1, age, covar3, covar1, vas, time, covar2, fact1, binary2, sex, bmi=1, trt=1, est.all=FALSE, vnames=c( "labels")),
+           log=TRUE, xlim=c(log(.2),log(10)),
+           q=c( 0.95 ), at=c( .1,.2,.3,.5,.75,1, 1.2,1.5, 2,3,4,6,8,10), lwd=3, pch=17,
+           col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
+           col.points='black', cex=1,  main=" <- worse outcomes      Odds Ratio       better outcomes ->                ", cex.main=1.8 
+      )
+      
     })
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    output$powerp4 <- renderPrint({  # renderText not so useful
-        
-        
-        
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # MAIN EFFECTS MODELL
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    zummaryC<- reactive({
+      
+      X <- analysis() 
+      
+      A1 <- summary(X$C, smoking=1, age, covar3, covar1, vas, time, covar2, fact1, binary2, sex, bmi=1, trt=1, est.all=FALSE, vnames=c( "labels"))
+      
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      return(list(  A1=A1 )) 
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
     })
+    
+    output$int.trt1C <- renderPrint({
+      return(print(zummaryC()$A1))
+    }) 
+    
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # 
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
