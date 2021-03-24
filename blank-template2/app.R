@@ -1043,7 +1043,7 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                       
                                       fluidRow(
                                         box(
-                                          width=6,
+                                          width=12,
                                           title='xxxxxxxxxxxxx'
                                           ,status = "primary"
                                           ,solidHeader = TRUE 
@@ -1052,57 +1052,60 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                           
                                           
                                           splitLayout(
-                                            textInput("age.range", div(h5(tags$span(style="color:black", "Age (continuous)"))), value= "30, 54"),
-                                            textInput("biomarker.range", div(h5(tags$span(style="color:black", "covar3 (biomarker)"))), value= "0.7675, 2.2300"),  #18
-                                            textInput("blood.range", div(h5(tags$span(style="color:black", "covar1 (Blood score)"))), value= "2.5700, 7.7525")
+                                            textInput("age.range", div(h5(tags$span(style="color:black", "Age (continuous)"))), value= "30, 54", width='85%'),
+                                            textInput("biomarker.range", div(h5(tags$span(style="color:black", "covar3 (biomarker)"))), value= "0.7675, 2.2300", width='85%'),
+                                            textInput("blood.range", div(h5(tags$span(style="color:black", "covar1 (Blood score)"))), value= "2.5700, 7.7525", width='85%'),
                                             
                                             
-                                          ),
-                                          splitLayout(
+                                         # ),
+                                        #  splitLayout(
                                             
-                                            textInput("vas.range", div(h5(tags$span(style="color:black", "Vas (continuous)"))), value= "18, 23"),  #1
-                                            textInput("time.range", div(h5(tags$span(style="color:black", "Time (continuous)"))), value= "2.355, 7.420"),
-                                            textInput("fitness.range", div(h5(tags$span(style="color:black", "covar2 (Fitness score)"))), value= "13, 38")
+                                            textInput("vas.range", div(h5(tags$span(style="color:black", "Vas (continuous)"))), value= "18, 23", width='85%'),
+                                            textInput("time.range", div(h5(tags$span(style="color:black", "Time (continuous)"))), value= "2.355, 7.420", width='85%'),
+                                            textInput("fitness.range", div(h5(tags$span(style="color:black", "covar2 (Fitness score)"))), value= "13, 38", width='85%')
                                             
                                           ),
                                           
-                                          h4(paste("The boxes below can be used to adjust the factor reference levels (affecting forest plot and presentation of treatment effects at very bottom). The continuous variables are held at sensible values (we did not center the continuous variables in the regression). 
+                                          h4(paste("The boxes below can be used to adjust the factor reference levels. The continuous variables are held at sensible values (we did not center the continuous variables in the regression). 
                                        Set the continuous to zero and observe the treatment comparison confidence intervals. Only the treatment bars will change as treatment interacts with all variables. ")),
                                           
                                           splitLayout(
-                                            textInput("adj.smoking", div(h5(tags$span(style="color:blue", "Smoking ref (factor)"))), value= "1"),
-                                            textInput("adj.age", div(h5(tags$span(style="color:blue", "Age (continuous)"))), value= "40"),  #18
-                                            textInput("adj.biomarker", div(h5(tags$span(style="color:blue", "covar3 (biomarker)"))), value=  "1.3"),
-                                            textInput("adj.blood", div(h5(tags$span(style="color:blue", "covar1 (Blood score)"))), value= "5"),
-                                            textInput("adj.vas", div(h5(tags$span(style="color:blue", "Vas (continuous)"))), value= "17"),  #1
-                                            textInput("adj.time", div(h5(tags$span(style="color:blue", "Time (continuous)"))), value= "4", width='85%')
+                                            textInput("adj.smoking", div(h5(tags$span(style="color:blue", "Smoking ref (factor)"))), value= "1", width='80%'),
+                                            textInput("adj.age", div(h5(tags$span(style="color:blue", "Age (continuous)"))), value= "40", width='80%'),
+                                            textInput("adj.biomarker", div(h5(tags$span(style="color:blue", "covar3 (biomarker)"))), value=  "1.3", width='80%'),
+                                            textInput("adj.blood", div(h5(tags$span(style="color:blue", "covar1 (Blood score)"))), value= "5", width='80%'),
+                                            textInput("adj.vas", div(h5(tags$span(style="color:blue", "Vas (continuous)"))), value= "17", width='80%'),
+                                            textInput("adj.time", div(h5(tags$span(style="color:blue", "Time (continuous)"))), value= "4", width='80%'),
                                             
-                                          ),
+                                         # ),
                                           
-                                          splitLayout(
+                                        #  splitLayout(
                                             
                                             #textInput(inputId="hr2", label='Enter xxxxxxxxxxxxx', width = '90%' , value="1.2"),
-                                            textInput("adj.fitness", div(h5(tags$span(style="color:blue", "covar2 (Fitness score)"))), value= "20"),  #1
-                                            textInput("adj.history", div(h5(tags$span(style="color:blue", "fact1 ref (History binary)"))), value= "0"),
-                                            textInput("adj.employed", div(h5(tags$span(style="color:blue", "binary2 ref (Employed)"))), value= "0"),
-                                            textInput("adj.sex", div(h5(tags$span(style="color:blue", "Sex red (binary)"))), value= "0"),
-                                            textInput("adj.BMI", div(h5(tags$span(style="color:blue", "BMI ref (factor)"))), value= "1", width='85%')
+                                            textInput("adj.fitness", div(h5(tags$span(style="color:blue", "covar2 (Fitness score)"))), value= "20", width='80%'),
+                                            textInput("adj.history", div(h5(tags$span(style="color:blue", "fact1 ref (History bin.)"))), value= "0", width='80%'),
+                                            textInput("adj.employed", div(h5(tags$span(style="color:blue", "binary2 ref (Empl.)"))), value= "0", width='80%'),
+                                            textInput("adj.sex", div(h5(tags$span(style="color:blue", "Sex red (binary)"))), value= "0", width='80%'),
+                                            textInput("adj.BMI", div(h5(tags$span(style="color:blue", "BMI ref (factor)"))), value= "1", width='80%')
                                             
                                             
                                           ),   
                                         )
                                         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~put forest plots here
-                                        ,box(
-                                          width=6,
-                                          title='xxxxxxxxxxxxx xxxxxxxxxxxxx'
-                                          ,status = "primary"
-                                          ,solidHeader = TRUE 
-                                          ,collapsible = TRUE 
-                                          # , DT::dataTableOutput("CHAZ")
-                                          ,p("")
-                                          #div(plotOutput("f.plot1", width=fig.width4, height=fig.height7))
-                                          ,p("xxxxxxxxxxxxx")
-                                        )),   
+                                        # ,box(
+                                        #   width=6,
+                                        #   title='xxxxxxxxxxxxx xxxxxxxxxxxxx'
+                                        #   ,status = "primary"
+                                        #   ,solidHeader = TRUE 
+                                        #   ,collapsible = TRUE 
+                                        #   # , DT::dataTableOutput("CHAZ")
+                                        #   ,p("")
+                                        #   #div(plotOutput("f.plot1", width=fig.width4, height=fig.height7))
+                                        #   ,p("xxxxxxxxxxxxx")
+                                        # )
+                                        
+                                        
+                                        ),   
                                       
                                       
                                       
