@@ -665,71 +665,71 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                               #,h5(textOutput("info2"))
                                           )
                                           
-                                       ,box(
-                                            title='xxxxxxxxxxxxx'
-                                            ,status = "primary"
-                                            ,solidHeader = TRUE 
-                                            ,collapsible = TRUE ,
-                                            #,plotOutput("plot2", height = "720px")
-                                            
-                                            
-                                            splitLayout(
-                                              textInput("age.range", div(h5(tags$span(style="color:black", "Age (continuous)"))), value= "30, 54"),
-                                              textInput("biomarker.range", div(h5(tags$span(style="color:black", "covar3 (biomarker)"))), value= "0.7675, 2.2300"),  #18
-                                              textInput("blood.range", div(h5(tags$span(style="color:black", "covar1 (Blood score)"))), value= "2.5700, 7.7525")
-                                              
-                                              
-                                            ),
-                                            splitLayout(
-                                              
-                                              textInput("vas.range", div(h5(tags$span(style="color:black", "Vas (continuous)"))), value= "18, 23"),  #1
-                                              textInput("time.range", div(h5(tags$span(style="color:black", "Time (continuous)"))), value= "2.355, 7.420"),
-                                              textInput("fitness.range", div(h5(tags$span(style="color:black", "covar2 (Fitness score)"))), value= "13, 38")
-                                              
-                                            ),
-                                            
-                                            h4(paste("The boxes below can be used to adjust the factor reference levels (affecting forest plot and presentation of treatment effects at very bottom). The continuous variables are held at sensible values (we did not center the continuous variables in the regression). 
-                                       Set the continuous to zero and observe the treatment comparison confidence intervals. Only the treatment bars will change as treatment interacts with all variables. ")),
-                                            
-                                            splitLayout(
-                                              textInput("adj.smoking", div(h5(tags$span(style="color:blue", "Smoking ref (factor)"))), value= "1"),
-                                              textInput("adj.age", div(h5(tags$span(style="color:blue", "Age (continuous)"))), value= "40"),  #18
-                                              textInput("adj.biomarker", div(h5(tags$span(style="color:blue", "covar3 (biomarker)"))), value=  "1.3"),
-                                              textInput("adj.blood", div(h5(tags$span(style="color:blue", "covar1 (Blood score)"))), value= "5"),
-                                              textInput("adj.vas", div(h5(tags$span(style="color:blue", "Vas (continuous)"))), value= "17"),  #1
-                                              textInput("adj.time", div(h5(tags$span(style="color:blue", "Time (continuous)"))), value= "4")
-                                              
-                                            ),
-                                            
-                                            splitLayout(
-                                              
-                                              
-                                              textInput("adj.fitness", div(h5(tags$span(style="color:blue", "covar2 (Fitness score)"))), value= "20"),  #1
-                                              textInput("adj.history", div(h5(tags$span(style="color:blue", "fact1 ref (History binary)"))), value= "0"),
-                                              textInput("adj.employed", div(h5(tags$span(style="color:blue", "binary2 ref (Employed)"))), value= "0"),
-                                              textInput("adj.sex", div(h5(tags$span(style="color:blue", "Sex red (binary)"))), value= "0"),
-                                              textInput("adj.BMI", div(h5(tags$span(style="color:blue", "BMI ref (factor)"))), value= "1")
-                                              
-                                              
-                                            ),
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                          )
+                                       # ,box(
+                                       #      title='xxxxxxxxxxxxx'
+                                       #      ,status = "primary"
+                                       #      ,solidHeader = TRUE 
+                                       #      ,collapsible = TRUE ,
+                                       #      #,plotOutput("plot2", height = "720px")
+                                       #      
+                                       #      
+                                       #      splitLayout(
+                                       #        textInput("age.range", div(h5(tags$span(style="color:black", "Age (continuous)"))), value= "30, 54"),
+                                       #        textInput("biomarker.range", div(h5(tags$span(style="color:black", "covar3 (biomarker)"))), value= "0.7675, 2.2300"),  #18
+                                       #        textInput("blood.range", div(h5(tags$span(style="color:black", "covar1 (Blood score)"))), value= "2.5700, 7.7525")
+                                       #        
+                                       #        
+                                       #      ),
+                                       #      splitLayout(
+                                       #        
+                                       #        textInput("vas.range", div(h5(tags$span(style="color:black", "Vas (continuous)"))), value= "18, 23"),  #1
+                                       #        textInput("time.range", div(h5(tags$span(style="color:black", "Time (continuous)"))), value= "2.355, 7.420"),
+                                       #        textInput("fitness.range", div(h5(tags$span(style="color:black", "covar2 (Fitness score)"))), value= "13, 38")
+                                       #        
+                                       #      ),
+                                       #      
+                                       #      h4(paste("The boxes below can be used to adjust the factor reference levels (affecting forest plot and presentation of treatment effects at very bottom). The continuous variables are held at sensible values (we did not center the continuous variables in the regression). 
+                                       # Set the continuous to zero and observe the treatment comparison confidence intervals. Only the treatment bars will change as treatment interacts with all variables. ")),
+                                       #      
+                                       #      splitLayout(
+                                       #        textInput("adj.smoking", div(h5(tags$span(style="color:blue", "Smoking ref (factor)"))), value= "1"),
+                                       #        textInput("adj.age", div(h5(tags$span(style="color:blue", "Age (continuous)"))), value= "40"),  #18
+                                       #        textInput("adj.biomarker", div(h5(tags$span(style="color:blue", "covar3 (biomarker)"))), value=  "1.3"),
+                                       #        textInput("adj.blood", div(h5(tags$span(style="color:blue", "covar1 (Blood score)"))), value= "5"),
+                                       #        textInput("adj.vas", div(h5(tags$span(style="color:blue", "Vas (continuous)"))), value= "17"),  #1
+                                       #        textInput("adj.time", div(h5(tags$span(style="color:blue", "Time (continuous)"))), value= "4")
+                                       #        
+                                       #      ),
+                                       #      
+                                       #      splitLayout(
+                                       #        
+                                       #        
+                                       #        textInput("adj.fitness", div(h5(tags$span(style="color:blue", "covar2 (Fitness score)"))), value= "20"),  #1
+                                       #        textInput("adj.history", div(h5(tags$span(style="color:blue", "fact1 ref (History binary)"))), value= "0"),
+                                       #        textInput("adj.employed", div(h5(tags$span(style="color:blue", "binary2 ref (Employed)"))), value= "0"),
+                                       #        textInput("adj.sex", div(h5(tags$span(style="color:blue", "Sex red (binary)"))), value= "0"),
+                                       #        textInput("adj.BMI", div(h5(tags$span(style="color:blue", "BMI ref (factor)"))), value= "1")
+                                       #        
+                                       #        
+                                       #      ),
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #      
+                                       #    )
                                           
                                           )),   
                               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1102,40 +1102,45 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                           ,p("")
                                           #div(plotOutput("f.plot1", width=fig.width4, height=fig.height7))
                                           ,p("xxxxxxxxxxxxx")
-                                        )),     
-                                      fluidRow(
-                                        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                          box(width=4,
-                                              title = "xxxxxxxxxxxxx xxxxxxxxxxxxx" 
-                                              ,status = "primary"
-                                              ,solidHeader = TRUE 
-                                              ,collapsible = TRUE 
-                                             , div(plotOutput("f.plot1", width=fig.width, height=fig.height7))
-                                              ,p("xxxxxxxxxxxxx")
-                                          )
-                                          
-                                          #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                          , box(width=4,
-                                            title='xxxxxxxxxxxxx'
-                                            ,status = "primary"
-                                            ,solidHeader = TRUE 
-                                            ,collapsible = TRUE 
-                                           , div(plotOutput("f.plot2", width=fig.width, height=fig.height7))
-                                            ,p("xxxxxxxxxxxxx")
-                                          )
-                                          
-                                          #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                          ,box(width=4,
-                                               title="xxxxxxxxxxxxx xxxxxxxxxxxxx" 
-                                               ,status = "primary"
-                                               ,solidHeader = TRUE
-                                               ,collapsible = TRUE
-                                               , div(plotOutput("f.plot3x", width=fig.width, height=fig.height7)) 
-                                               ,p("xxxxxxxxxxxxx")
-                                          ) 
-                                          
-                                          
-                                      ),  #fluidrow
+                                        )),   
+                                      
+                                      
+                                      
+                                      # fluidRow(
+                                      #   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                      #   
+                                      #   # 3 boxes code out
+                                      #     box(width=4,
+                                      #         title = "xxxxxxxxxxxxx xxxxxxxxxxxxx" 
+                                      #         ,status = "primary"
+                                      #         ,solidHeader = TRUE 
+                                      #         ,collapsible = TRUE 
+                                      #        , div(plotOutput("f.plot1", width=fig.width, height=fig.height7))
+                                      #         ,p("xxxxxxxxxxxxx")
+                                      #     )
+                                      #     
+                                      #     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                      #     , box(width=4,
+                                      #       title='xxxxxxxxxxxxx'
+                                      #       ,status = "primary"
+                                      #       ,solidHeader = TRUE 
+                                      #       ,collapsible = TRUE 
+                                      #      , div(plotOutput("f.plot2", width=fig.width, height=fig.height7))
+                                      #       ,p("xxxxxxxxxxxxx")
+                                      #     )
+                                      #     
+                                      #     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                      #     ,box(width=4,
+                                      #          title="xxxxxxxxxxxxx xxxxxxxxxxxxx" 
+                                      #          ,status = "primary"
+                                      #          ,solidHeader = TRUE
+                                      #          ,collapsible = TRUE
+                                      #          , div(plotOutput("f.plot3x", width=fig.width, height=fig.height7)) 
+                                      #          ,p("xxxxxxxxxxxxx")
+                                      #     ) 
+                                      #     
+                                      #     
+                                      # ),  #fluidrow
                                       
                                       
                                       
@@ -1148,7 +1153,7 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                             ,status = "primary"
                                             ,solidHeader = TRUE 
                                             ,collapsible = TRUE 
-                                            , div(plotOutput("f.plot99", width=fig.width9, height=fig.height7))
+                                            , div(plotOutput("f.plot99", width=1500, height=fig.height7))
                                             ,p("xxxxxxxxxxxxx")
                                         )
                                         
@@ -1569,64 +1574,64 @@ server <- function(input, output) {
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
     # trtt x all
-    output$f.plot1 <- renderPlot({   
-      
-      X <- analysis() 
-      
-      A <- X$A
-      
-      v0. <- as.numeric(    eval(parse(text= (input$adj.smoking)) ) )
-      v1. <- as.numeric(    eval(parse(text= (input$adj.age)) ) )
-      v2. <- as.numeric(    eval(parse(text= (input$adj.biomarker)) ) )
-      v3. <- as.numeric(    eval(parse(text= (input$adj.blood)) ) )
-      v4. <- as.numeric(    eval(parse(text= (input$adj.vas)) ) )   
-      v5. <- as.numeric(    eval(parse(text= (input$adj.time)) ) ) 
-      v6. <- as.numeric(    eval(parse(text= (input$adj.fitness)) ) ) 
-      v7. <- as.numeric(    eval(parse(text= (input$adj.history)) ) )
-      v8. <- as.numeric(    eval(parse(text= (input$adj.employed)) ) )
-      v9. <- as.numeric(    eval(parse(text= (input$adj.sex)) ) )
-      v10. <-as.numeric(    eval(parse(text= (input$adj.BMI)) ) )
-      
-      
-      par(mfrow=c(1,1)) 
-      
-      par(oma=c(3,6,1,1)) 
-      
-      options(digits=1)
-      
-      
-      plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
-                   covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,  
-                   trt=1, est.all=FALSE, vnames=c( "labels")), 
-           log=TRUE, xlim=c(log(.01),log(40)),
-           q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
-           col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
-           col.points='black', cex=1, main= "Odds Ratio (Treatment 1)", cex.main=1.8
-      )
-      
-      # plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
-      #              covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
-      #              trt=2, est.all=FALSE, vnames=c( "labels")), 
-      #      log=TRUE, xlim=c(log(.01),log(40)),
-      #      q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
-      #      col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
-      #      col.points='black', cex=1, main= "Odds Ratio (Treatment 2)", cex.main=1.8
-      # )
-      # 
-      # plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
-      #              covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
-      #              trt=3, est.all=FALSE, vnames=c( "labels")), 
-      #      log=TRUE, xlim=c(log(.01),log(40)),
-      #      q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
-      #      col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
-      #      col.points='black', cex=1, main= "Odds Ratio (Treatment 3)", cex.main=1.8
-      # )
-      
-      par(mfrow=c(1,1))
-      
-      
-      
-    }) 
+    # output$f.plot1 <- renderPlot({   
+    #   
+    #   X <- analysis() 
+    #   
+    #   A <- X$A
+    #   
+    #   v0. <- as.numeric(    eval(parse(text= (input$adj.smoking)) ) )
+    #   v1. <- as.numeric(    eval(parse(text= (input$adj.age)) ) )
+    #   v2. <- as.numeric(    eval(parse(text= (input$adj.biomarker)) ) )
+    #   v3. <- as.numeric(    eval(parse(text= (input$adj.blood)) ) )
+    #   v4. <- as.numeric(    eval(parse(text= (input$adj.vas)) ) )   
+    #   v5. <- as.numeric(    eval(parse(text= (input$adj.time)) ) ) 
+    #   v6. <- as.numeric(    eval(parse(text= (input$adj.fitness)) ) ) 
+    #   v7. <- as.numeric(    eval(parse(text= (input$adj.history)) ) )
+    #   v8. <- as.numeric(    eval(parse(text= (input$adj.employed)) ) )
+    #   v9. <- as.numeric(    eval(parse(text= (input$adj.sex)) ) )
+    #   v10. <-as.numeric(    eval(parse(text= (input$adj.BMI)) ) )
+    #   
+    #   
+    #   par(mfrow=c(1,1)) 
+    #   
+    #   par(oma=c(3,6,1,1)) 
+    #   
+    #   options(digits=1)
+    #   
+    #   
+    #   plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
+    #                covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,  
+    #                trt=1, est.all=FALSE, vnames=c( "labels")), 
+    #        log=TRUE, xlim=c(log(.01),log(40)),
+    #        q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
+    #        col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
+    #        col.points='black', cex=1, main= "Odds Ratio (Treatment 1)", cex.main=1.8
+    #   )
+    #   
+    #   # plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
+    #   #              covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
+    #   #              trt=2, est.all=FALSE, vnames=c( "labels")), 
+    #   #      log=TRUE, xlim=c(log(.01),log(40)),
+    #   #      q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
+    #   #      col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
+    #   #      col.points='black', cex=1, main= "Odds Ratio (Treatment 2)", cex.main=1.8
+    #   # )
+    #   # 
+    #   # plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
+    #   #              covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
+    #   #              trt=3, est.all=FALSE, vnames=c( "labels")), 
+    #   #      log=TRUE, xlim=c(log(.01),log(40)),
+    #   #      q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
+    #   #      col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
+    #   #      col.points='black', cex=1, main= "Odds Ratio (Treatment 3)", cex.main=1.8
+    #   # )
+    #   
+    #   par(mfrow=c(1,1))
+    #   
+    #   
+    #   
+    # }) 
     
     
     
@@ -1634,64 +1639,64 @@ server <- function(input, output) {
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
     # trtt x all
-    output$f.plot2 <- renderPlot({   
-      
-      X <- analysis() 
-      
-      A <- X$A
-      
-      v0. <- as.numeric(    eval(parse(text= (input$adj.smoking)) ) )
-      v1. <- as.numeric(    eval(parse(text= (input$adj.age)) ) )
-      v2. <- as.numeric(    eval(parse(text= (input$adj.biomarker)) ) )
-      v3. <- as.numeric(    eval(parse(text= (input$adj.blood)) ) )
-      v4. <- as.numeric(    eval(parse(text= (input$adj.vas)) ) )   
-      v5. <- as.numeric(    eval(parse(text= (input$adj.time)) ) ) 
-      v6. <- as.numeric(    eval(parse(text= (input$adj.fitness)) ) ) 
-      v7. <- as.numeric(    eval(parse(text= (input$adj.history)) ) )
-      v8. <- as.numeric(    eval(parse(text= (input$adj.employed)) ) )
-      v9. <- as.numeric(    eval(parse(text= (input$adj.sex)) ) )
-      v10. <-as.numeric(    eval(parse(text= (input$adj.BMI)) ) )
-      
-      
-      par(mfrow=c(1,1)) 
-      
-      par(oma=c(3,6,1,1)) 
-      
-      options(digits=1)
-      
-      
-      # plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
-      #              covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,  
-      #              trt=1, est.all=FALSE, vnames=c( "labels")), 
-      #      log=TRUE, xlim=c(log(.01),log(40)),
-      #      q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
-      #      col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
-      #      col.points='black', cex=1, main= "Odds Ratio (Treatment 1)", cex.main=1.8
-      # )
-      
-      plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
-                   covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
-                   trt=2, est.all=FALSE, vnames=c( "labels")), 
-           log=TRUE, xlim=c(log(.01),log(40)),
-           q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
-           col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
-           col.points='black', cex=1, main= "Odds Ratio (Treatment 2)", cex.main=1.8
-      )
-      
-      # plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
-      #              covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
-      #              trt=3, est.all=FALSE, vnames=c( "labels")), 
-      #      log=TRUE, xlim=c(log(.01),log(40)),
-      #      q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
-      #      col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
-      #      col.points='black', cex=1, main= "Odds Ratio (Treatment 3)", cex.main=1.8
-      # )
-      
-      par(mfrow=c(1,1))
-      
-      
-      
-    }) 
+    # output$f.plot2 <- renderPlot({   
+    #   
+    #   X <- analysis() 
+    #   
+    #   A <- X$A
+    #   
+    #   v0. <- as.numeric(    eval(parse(text= (input$adj.smoking)) ) )
+    #   v1. <- as.numeric(    eval(parse(text= (input$adj.age)) ) )
+    #   v2. <- as.numeric(    eval(parse(text= (input$adj.biomarker)) ) )
+    #   v3. <- as.numeric(    eval(parse(text= (input$adj.blood)) ) )
+    #   v4. <- as.numeric(    eval(parse(text= (input$adj.vas)) ) )   
+    #   v5. <- as.numeric(    eval(parse(text= (input$adj.time)) ) ) 
+    #   v6. <- as.numeric(    eval(parse(text= (input$adj.fitness)) ) ) 
+    #   v7. <- as.numeric(    eval(parse(text= (input$adj.history)) ) )
+    #   v8. <- as.numeric(    eval(parse(text= (input$adj.employed)) ) )
+    #   v9. <- as.numeric(    eval(parse(text= (input$adj.sex)) ) )
+    #   v10. <-as.numeric(    eval(parse(text= (input$adj.BMI)) ) )
+    #   
+    #   
+    #   par(mfrow=c(1,1)) 
+    #   
+    #   par(oma=c(3,6,1,1)) 
+    #   
+    #   options(digits=1)
+    #   
+    #   
+    #   # plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
+    #   #              covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,  
+    #   #              trt=1, est.all=FALSE, vnames=c( "labels")), 
+    #   #      log=TRUE, xlim=c(log(.01),log(40)),
+    #   #      q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
+    #   #      col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
+    #   #      col.points='black', cex=1, main= "Odds Ratio (Treatment 1)", cex.main=1.8
+    #   # )
+    #   
+    #   plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
+    #                covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
+    #                trt=2, est.all=FALSE, vnames=c( "labels")), 
+    #        log=TRUE, xlim=c(log(.01),log(40)),
+    #        q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
+    #        col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
+    #        col.points='black', cex=1, main= "Odds Ratio (Treatment 2)", cex.main=1.8
+    #   )
+    #   
+    #   # plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
+    #   #              covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
+    #   #              trt=3, est.all=FALSE, vnames=c( "labels")), 
+    #   #      log=TRUE, xlim=c(log(.01),log(40)),
+    #   #      q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
+    #   #      col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
+    #   #      col.points='black', cex=1, main= "Odds Ratio (Treatment 3)", cex.main=1.8
+    #   # )
+    #   
+    #   par(mfrow=c(1,1))
+    #   
+    #   
+    #   
+    # }) 
     
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1700,64 +1705,64 @@ server <- function(input, output) {
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
     # trtt x all
-    output$f.plot3x <- renderPlot({   
-      
-      X <- analysis() 
-      
-      A <- X$A
-      
-      v0. <- as.numeric(    eval(parse(text= (input$adj.smoking)) ) )
-      v1. <- as.numeric(    eval(parse(text= (input$adj.age)) ) )
-      v2. <- as.numeric(    eval(parse(text= (input$adj.biomarker)) ) )
-      v3. <- as.numeric(    eval(parse(text= (input$adj.blood)) ) )
-      v4. <- as.numeric(    eval(parse(text= (input$adj.vas)) ) )   
-      v5. <- as.numeric(    eval(parse(text= (input$adj.time)) ) ) 
-      v6. <- as.numeric(    eval(parse(text= (input$adj.fitness)) ) ) 
-      v7. <- as.numeric(    eval(parse(text= (input$adj.history)) ) )
-      v8. <- as.numeric(    eval(parse(text= (input$adj.employed)) ) )
-      v9. <- as.numeric(    eval(parse(text= (input$adj.sex)) ) )
-      v10. <-as.numeric(    eval(parse(text= (input$adj.BMI)) ) )
-      
-      
-      par(mfrow=c(1,1)) 
-      
-      par(oma=c(3,6,1,1)) 
-      
-      options(digits=1)
-      
-      
-      # plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
-      #              covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,  
-      #              trt=1, est.all=FALSE, vnames=c( "labels")), 
-      #      log=TRUE, xlim=c(log(.01),log(40)),
-      #      q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
-      #      col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
-      #      col.points='black', cex=1, main= "Odds Ratio (Treatment 1)", cex.main=1.8
-      # )
-      
-      # plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
-      #              covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
-      #              trt=2, est.all=FALSE, vnames=c( "labels")), 
-      #      log=TRUE, xlim=c(log(.01),log(40)),
-      #      q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
-      #      col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
-      #      col.points='black', cex=1, main= "Odds Ratio (Treatment 2)", cex.main=1.8
-      # )
-      
-      plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
-                   covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
-                   trt=3, est.all=FALSE, vnames=c( "labels")),
-           log=TRUE, xlim=c(log(.01),log(40)),
-           q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
-           col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
-           col.points='black', cex=1, main= "Odds Ratio (Treatment 3)", cex.main=1.8
-      )
-      
-      par(mfrow=c(1,1))
-      
-      
-      
-    }) 
+    # output$f.plot3x <- renderPlot({   
+    #   
+    #   X <- analysis() 
+    #   
+    #   A <- X$A
+    #   
+    #   v0. <- as.numeric(    eval(parse(text= (input$adj.smoking)) ) )
+    #   v1. <- as.numeric(    eval(parse(text= (input$adj.age)) ) )
+    #   v2. <- as.numeric(    eval(parse(text= (input$adj.biomarker)) ) )
+    #   v3. <- as.numeric(    eval(parse(text= (input$adj.blood)) ) )
+    #   v4. <- as.numeric(    eval(parse(text= (input$adj.vas)) ) )   
+    #   v5. <- as.numeric(    eval(parse(text= (input$adj.time)) ) ) 
+    #   v6. <- as.numeric(    eval(parse(text= (input$adj.fitness)) ) ) 
+    #   v7. <- as.numeric(    eval(parse(text= (input$adj.history)) ) )
+    #   v8. <- as.numeric(    eval(parse(text= (input$adj.employed)) ) )
+    #   v9. <- as.numeric(    eval(parse(text= (input$adj.sex)) ) )
+    #   v10. <-as.numeric(    eval(parse(text= (input$adj.BMI)) ) )
+    #   
+    #   
+    #   par(mfrow=c(1,1)) 
+    #   
+    #   par(oma=c(3,6,1,1)) 
+    #   
+    #   options(digits=1)
+    #   
+    #   
+    #   # plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
+    #   #              covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,  
+    #   #              trt=1, est.all=FALSE, vnames=c( "labels")), 
+    #   #      log=TRUE, xlim=c(log(.01),log(40)),
+    #   #      q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
+    #   #      col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
+    #   #      col.points='black', cex=1, main= "Odds Ratio (Treatment 1)", cex.main=1.8
+    #   # )
+    #   
+    #   # plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5., 
+    #   #              covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
+    #   #              trt=2, est.all=FALSE, vnames=c( "labels")), 
+    #   #      log=TRUE, xlim=c(log(.01),log(40)),
+    #   #      q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
+    #   #      col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
+    #   #      col.points='black', cex=1, main= "Odds Ratio (Treatment 2)", cex.main=1.8
+    #   # )
+    #   
+    #   plot(summary(A, smoking=v0., age=v1., covar3=v2., covar1=v3., vas=v4., time=v5.,
+    #                covar2=v6., fact1=v7., binary2=v8., sex=v9., bmi=v10.,
+    #                trt=3, est.all=FALSE, vnames=c( "labels")),
+    #        log=TRUE, xlim=c(log(.01),log(40)),
+    #        q=c(  0.95 ), at=c(.02,0.05,.1,.2,.5,1,2,4,8,20), lwd=3, pch=17,
+    #        col=   rgb(red=.4,green=.1,blue=.5,alpha=c(.5,.3,.2)),
+    #        col.points='black', cex=1, main= "Odds Ratio (Treatment 3)", cex.main=1.8
+    #   )
+    #   
+    #   par(mfrow=c(1,1))
+    #   
+    #   
+    #   
+    # }) 
     
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1786,10 +1791,10 @@ server <- function(input, output) {
       v10. <-as.numeric(    eval(parse(text= (input$adj.BMI)) ) )
       
       
-      par(mfrow=c(1,1)) 
+      par(mfrow=c(1,3)) ## change this to show nice plot 1,1
       
-      par(oma=c(3,6,1,1)) 
-      
+      par(oma=c(1,10,1,1))  # b l t  r
+      #par(mar=c(3,0,3,3))
       options(digits=1)
       
       
