@@ -245,20 +245,20 @@ ui <- dashboardPage(  title="xxxxxxxxxxxxx",
                                                                
                                                                
                                                                
-                                                               splitLayout(
-                                                                 textInput("age.range", div(h5(tags$span(style="color:yellow", "Age (continuous)"))), value= "30, 54"),
-                                                                 textInput("biomarker.range", div(h5(tags$span(style="color:yellow", "covar3 (biomarker)"))), value= "0.7675, 2.2300"),  #18
-                                                                 textInput("blood.range", div(h5(tags$span(style="color:yellow", "covar1 (Blood score)"))), value= "2.5700, 7.7525")
-                                                                 
-
-                                                               ),
-                                                               splitLayout(
-                                                                  
-                                                                 textInput("vas.range", div(h5(tags$span(style="color:yellow", "Vas (continuous)"))), value= "18, 23"),  #1
-                                                                 textInput("time.range", div(h5(tags$span(style="color:yellow", "Time (continuous)"))), value= "2.355, 7.420"),
-                                                                 textInput("fitness.range", div(h5(tags$span(style="color:yellow", "covar2 (Fitness score)"))), value= "13, 38")
-                                                                 
-                                                               ),
+                                                               # splitLayout(
+                                                               #   textInput("age.range", div(h5(tags$span(style="color:yellow", "Age (continuous)"))), value= "30, 54"),
+                                                               #   textInput("biomarker.range", div(h5(tags$span(style="color:yellow", "covar3 (biomarker)"))), value= "0.7675, 2.2300"),  #18
+                                                               #   textInput("blood.range", div(h5(tags$span(style="color:yellow", "covar1 (Blood score)"))), value= "2.5700, 7.7525")
+                                                               #   
+                                                               # 
+                                                               # ),
+                                                               # splitLayout(
+                                                               #    
+                                                               #   textInput("vas.range", div(h5(tags$span(style="color:yellow", "Vas (continuous)"))), value= "18, 23"),  #1
+                                                               #   textInput("time.range", div(h5(tags$span(style="color:yellow", "Time (continuous)"))), value= "2.355, 7.420"),
+                                                               #   textInput("fitness.range", div(h5(tags$span(style="color:yellow", "covar2 (Fitness score)"))), value= "13, 38")
+                                                               #   
+                                                               # ),
                                                                
                                                                
                                                                
