@@ -1,7 +1,7 @@
 
 #https://stackoverflow.com/questions/57944333/linear-regression-simulation
 #https://stackoverflow.com/questions/26955334/how-to-create-a-factor-interaction-variable-in-r-why-cant-i-just-multiply
-
+ 
 # N=4000 # population size
 # n=4000 # sample size   
 # 
