@@ -26,7 +26,7 @@
 
 
 rm(list=ls())
-require(rms)
+require(rms) 
 library(forestplot)
 p2 <- function(x) {formatC(x, format="f", digits=2)}
 set.seed(123)
