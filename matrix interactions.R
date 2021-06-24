@@ -31,46 +31,44 @@ library(forestplot)
 p2 <- function(x) {formatC(x, format="f", digits=2)}
 set.seed(123)
 N=10000 # population size
-N=400
-#~~~~~~~~~~~~~~~~~
+N=4000
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Variable distributions
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 age      <- sample(18:65, N, replace=TRUE) 
 
-#~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 x<-rexp(51)
 x<- exp(-.45*1:51)
 FASSS      <- sample(0:50, N, prob = (sort(x, decreasing =T)/sum(x)), replace=TRUE) 
 
-#~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 x<- exp(-.45*1:10)
 deg.chg       <- sample(0:9, N, prob = (sort(x, decreasing =T)/sum(x)), replace=TRUE) 
 
-#~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 berlin.spine=sample(as.factor(c(rep("yes",.27*N), 
                        rep("no",.63*N)))
            ,N, replace=T)
-
-#~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 berlin.spj =sample(as.factor(c(rep("yes",.3*N), 
                                 rep("no",.7*N)))
                     ,N, replace=T)
-
-#~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 trt=sample(as.factor(c(rep("placebo",.5*N), 
                        rep("drug",.5*N)))
            ,N, replace=T)
-
-#~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 sex=sample(as.factor(c(rep("male",.5*N), 
                        rep("female",.5*N)))
            ,N, replace=T)
-
-#~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 smoking=sample(as.factor(c(rep("Never",.33*N), 
                            rep("quitter",.33*N),
                            rep("smoker",.33*N)
                         )),N, replace=T)
-
-#~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 back=sample(as.factor(c(    rep("No changes",.125*N),
                             rep("inflam changes",.125*N), 
                             rep("post inflam chgs",.125*N), 
@@ -82,9 +80,9 @@ back=sample(as.factor(c(    rep("No changes",.125*N),
                             ))
             ,N,   
    replace=T)
-#~~~~~~~~~~~~~~~~~~~~
- 
-#~~~~~~~~~~~~~~~~~~~~~~true effects on the log scale
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# True parameters on the log scale
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 intercept <-            -3
 trt.effects <-          1                # we expect exp(1) OR that is OR= 2.7183, large effect
@@ -141,16 +139,21 @@ all.effects2 <- c(intercept ,
                  berlin.spj.effects 
                  )
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# linear predictors
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # trt interacts with everything
 X = as.matrix(model.matrix(~trt*(sex+back+smoking+age+FASSS+deg.chg+berlin.spine+berlin.spj))) # take a look .. nrow columns -> nrow effects
 lp <- as.numeric(as.matrix(X) %*% as.matrix(all.effects)) # mult
 
 # no interaction
-X1 = as.matrix(model.matrix(~trt+(sex+back+smoking+age+FASSS+deg.chg+berlin.spine+berlin.spj))) # take a look .. nrow columns -> nrow effects
-lp <- as.numeric(as.matrix(X1) %*% as.matrix(all.effects2)) # mult
+#X1 = as.matrix(model.matrix(~trt+(sex+back+smoking+age+FASSS+deg.chg+berlin.spine+berlin.spj))) # take a look .. nrow columns -> nrow effects
+#lp <- as.numeric(as.matrix(X1) %*% as.matrix(all.effects2)) # mult
 
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# binary response
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 colnames(X) # show effec
  
@@ -158,7 +161,8 @@ y <- ifelse(runif(N) < plogis(lp), 1, 0)   # one liner
 
 da <- cbind.data.frame(y,trt ,sex,back,smoking,age,FASSS,deg.chg,berlin.spine,berlin.spj)  
 
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# labels for forest plots
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 9 unobserved parameters
 label(da$age)                <- 'Age'                       # labels for forest plots
@@ -170,13 +174,18 @@ label(da$berlin.spj)         <- 'Berlin SPJ'
 label(da$deg.chg)            <- 'deg. change'
 label(da$FASSS)              <- "FASSS"
 label(da$sex)                <- 'Sex'
-#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# rms package Distributions 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 dd <<- datadist(da)
 options(datadist="dd")
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # RUN REGRESSONS
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- 
 A<-lrm(y~   trt * (sex+ back + smoking + age + berlin.spine + berlin.spj + deg.chg + FASSS ),da, y=TRUE ,x=TRUE)  # all interact with trt
 B<-lrm(y~  (trt * smoking) + sex+ back + age + berlin.spine + berlin.spj + deg.chg + FASSS,  da, y=TRUE, x=TRUE)  # smoking * trt only
 C<-lrm(y~   trt +  sex+ back + smoking + age + berlin.spine + berlin.spj + deg.chg + FASSS,  da, y=TRUE, x=TRUE)  # main effect
@@ -189,7 +198,9 @@ lrtest( A, C)
 lrtest( B, C)
 
 
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# plot each treatment
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 par(mfrow=c(1,2)) 
 
@@ -225,153 +236,150 @@ plot(
 par(mfrow=c(1,1))
 
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# trt contrasts, 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Sow the direct treatment effect for sex
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
 options(digits=6)
 z=contrast(A, list(sex=c("male","female"),  trt="drug"), 
             list(sex=c("male","female"),  trt="placebo"))
 print(z, fun=exp)
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # relevel, center and read treatment effect from regression table!
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # reference levels 
 da$back <-    relevel(factor(da$back) ,    ref="inflam and deg changes")
 da$smoking <- relevel(factor(da$smoking) , ref="quitter")
 da$trt <- relevel(factor(da$trt) , ref="placebo")
-# center the variables
+
+# center the continuous variables
 da$age <-      da$age     - median(da$age,     na.rm=TRUE)
 da$deg.chg <-  da$deg.chg - median(da$deg.chg, na.rm=TRUE)
 da$FASSS <-    da$FASSS   - median(da$FASSS,   na.rm=TRUE)
 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# compare the trt coefficient to the x object! they agree
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 update(A)
 da$sex <-    relevel(factor(da$sex) , ref="male")
 update(A)
 
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# move on to other predictors
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
 # get the trt effects for levels of smoking
 z <- contrast(A, list(smoking= dput(names(table(da$smoking))),  trt="drug"), 
                  list(smoking= dput(names(table(da$smoking))),  trt="placebo"))
 
 print(z, fun=exp)
 
-zz <- summary(A, smoking="quitter",  
-              trt=c("placebo","drug"), 
-              est.all=FALSE, vnames=c( "labels"), antilog = T)
-s1 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
+# zz <- summary(A, smoking="quitter",  
+#               trt=c("placebo","drug"), 
+#               est.all=FALSE, vnames=c( "labels"), antilog = T)
+# s1 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
 
 
-
-# get the trt effects for levels of back
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# get the trt effects for levels of back, used dput to save typing
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
 z <- contrast(A, list(back= dput(names(table(da$back))),  trt="drug"), 
                  list(back= dput(names(table(da$back))),  trt="placebo"))
 print(z, fun=exp)
 
-
-
-
-
-
-
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# This is not correct , but what is this 
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-d <- addmargins(table(da$back, da$y))
+d <- addmargins(table(da$back, da$y))  # get the counts
 d1 <- as.vector(d[,3])
-
-
 
 # summary(A, back="No changes", 
 #         trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = T)
 # 
 
-zz <- summary(A, back="No changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
-s1 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
-
-zz <- summary(A, back="infla and post inflam changes & deg changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
-s2 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
-
-zz <- summary(A, back="inflam and deg changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
-s3 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
-
-zz <- summary(A, back="inflam and post inflam changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
-s4 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
-
-zz <- summary(A, back="inflam changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
-s5 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
-
-zz <- summary(A, back="post inflam and deg changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
-s6 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
-
-zz <- summary(A, back="infla and post inflam changes & deg changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
-s7 <- as.vector(zz[dim(zz)[1],c(4,6,7)]) 
-
-zz <- summary(A, back="deg changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
-s8 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
-
-zz <- summary(C,   trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
-m <- as.vector(zz[dim(zz)[1],c(4,6,7)])
-
-
+  zz <- summary(A, back="No changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
+  s1 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
+  
+  zz <- summary(A, back="infla and post inflam changes & deg changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
+  s2 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
+  
+  zz <- summary(A, back="inflam and deg changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
+  s3 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
+  
+  zz <- summary(A, back="inflam and post inflam changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
+  s4 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
+  
+  zz <- summary(A, back="inflam changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
+  s5 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
+  
+  zz <- summary(A, back="post inflam and deg changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
+  s6 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
+  
+  zz <- summary(A, back="infla and post inflam changes & deg changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
+  s7 <- as.vector(zz[dim(zz)[1],c(4,6,7)]) 
+  
+  zz <- summary(A, back="deg changes",  trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
+  s8 <- as.vector(zz[dim(zz)[1],c(4,6,7)])
+  
+  zz <- summary(C,   trt=c("placebo","drug"), est.all=FALSE, vnames=c( "labels"), antilog = F)
+  m <- as.vector(zz[dim(zz)[1],c(4,6,7)])
 
 
+# predictor level names
 
+  vars <- c("Overall",
+            levels(da$back)
+            
+  )
 
-vars <- c("Overall",
-          levels(da$back)
-          
-)
+# co ordinates for plots
 
-
-
-
-
-# co ordinates
-
-
-df <- data.frame(study= vars,
-                 
-                 index= 1:(length(vars)),
-                 
-                 effect=c(   
+  df <- data.frame(study= vars,
                    
-                   s1[1],s2[1],s3[1],s4[1],s5[1],  s6[1],s7[1],s8[1] , m[1] ),
-                 
-                 lower= c(  
+                   index= 1:(length(vars)),
                    
-                   s1[2],s2[2],s3[2],s4[2],s5[2],  s6[2],s7[2],s8[2] ,m[2] ),
-                 
-                 upper= c(
+                   effect=c(   
+                     
+                     s1[1],s2[1],s3[1],s4[1],s5[1],  s6[1],s7[1],s8[1] , m[1] ),
                    
-                   s1[3],s2[3],s3[3],s4[3],s5[3],  s6[3],s7[3],s8[3]  ,m[3])
-                 
-)
+                   lower= c(  
+                     
+                     s1[2],s2[2],s3[2],s4[2],s5[2],  s6[2],s7[2],s8[2] ,m[2] ),
+                   
+                   upper= c(
+                     
+                     s1[3],s2[3],s3[3],s4[3],s5[3],  s6[3],s7[3],s8[3]  ,m[3])
+                   
+  )
 
-# ignore above and start df again
+# ignore above and start df again from the z object
 
-
- study=c(as.character(z$back), "overall")
- effect=c(as.numeric(z$Contrast),m[1])
- lower=c(as.numeric(z$Lower), m[2])
- upper=c(as.numeric(z$Upper), m[3])
- df <- data.frame(study, effect, lower, upper)
+   study=c(as.character(z$back), "overall")
+   effect=c(as.numeric(z$Contrast),m[1])
+   lower=c(as.numeric(z$Lower), m[2])
+   upper=c(as.numeric(z$Upper), m[3])
+   df <- data.frame(study, effect, lower, upper)
  
+  effect <- exp(df$effect)
+  lower  <- exp(df$lower)
+  upper  <- exp(df$upper)
+  
+  effect <-append(effect, c(NA,NA) , after=0)
+  lower  <-append(lower, c(NA,NA) , after=0)
+  upper  <-append(upper, c(NA,NA) , after=0)
+  
+  effect <-append(effect, c(NA) , after=length(effect)-1)
+  lower  <-append(lower, c(NA) ,  after=length(lower)-1)
+  upper  <-append(upper, c(NA) ,  after=length(upper)-1)
 
 
-
-
-effect <- exp(df$effect)
-lower  <- exp(df$lower)
-upper  <- exp(df$upper)
-
-effect <-append(effect, c(NA,NA) , after=0)
-lower  <-append(lower, c(NA,NA) , after=0)
-upper  <-append(upper, c(NA,NA) , after=0)
-
-effect <-append(effect, c(NA) , after=length(effect)-1)
-lower  <-append(lower, c(NA) ,  after=length(lower)-1)
-upper  <-append(upper, c(NA) ,  after=length(upper)-1)
-
-
+# stats
 # library(forestplot)
 cochrane_from_rmeta <- 
   structure(list(
@@ -392,7 +400,7 @@ ors[1] <- NA
 ors[2] <-  "Odds ratio & 95%CI" 
 ors[length(ors)-1] <- NA
 
-
+# put it all together
 tabletext <- cbind(
   
   c("", 
@@ -410,6 +418,8 @@ tabletext <- cbind(
 )
 
 xticks <- 2^seq(-8, 8, by=1)
+
+# overall trt makes no sense as we are presenting interaction
 
 dev.off()  #RESET PLOT WINDOW
 forestplot(tabletext, boxsize = 0.2,
@@ -461,12 +471,123 @@ forestplot(tabletext[-(dim(tabletext)[1]),], boxsize = 0.2,
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+z <- contrast(A, list(smoking= dput(names(table(da$smoking))),  trt="drug"), 
+                 list(smoking= dput(names(table(da$smoking))),  trt="placebo"))
+print(z, fun=exp)
+
+study=c(as.character(z$smoking), "overall")
+effect=c(as.numeric(z$Contrast),m[1])
+lower=c(as.numeric(z$Lower), m[2])
+upper=c(as.numeric(z$Upper), m[3])
+df <- data.frame(study, effect, lower, upper)
+
+effect <- exp(df$effect)
+lower  <- exp(df$lower)
+upper  <- exp(df$upper)
+
+effect <-append(effect, c(NA,NA) , after=0)
+lower  <-append(lower, c(NA,NA) , after=0)
+upper  <-append(upper, c(NA,NA) , after=0)
+
+effect <-append(effect, c(NA) , after=length(effect)-1)
+lower  <-append(lower, c(NA) ,  after=length(lower)-1)
+upper  <-append(upper, c(NA) ,  after=length(upper)-1)
+
+
+# stats
+# library(forestplot)
+cochrane_from_rmeta <- 
+  structure(list(
+    mean  = effect, 
+    lower = lower, 
+    upper = upper),
+    .Names = c("mean", "lower", "upper"), 
+    row.names = c (NA,7L), 
+    class = "data.frame")
+
+
+# text
+d <- addmargins(table(da$smoking, da$y))  # get the counts
+d1 <- as.vector(d[,3])
+
+
+txts <- cochrane_from_rmeta
+txts$txts  <- paste0(p2(txts$mean), " (",p2(txts$lower),", ",p2(txts$upper),")") 
+ors <- txts$txts
+ors[1] <- NA
+ors[2] <-  "Odds ratio & 95%CI" 
+ors[length(ors)-1] <- NA
+
+# put it all together
+tabletext <- cbind(
+  
+  c("", 
+    "Level", 
+    levels(da$smoking),
+    NA, 
+    "Overall Treatment effect"),
+  
+  c(NA, "N", 
+    d1[1:length(d1)-1],
+    NA, 
+    d1[length(d1)]),
+  
+  c(ors)
+)
+
+xticks <- 2^seq(-8, 8, by=1)
+
+# overall trt makes no sense as we are presenting interaction
+
+dev.off()  #RESET PLOT WINDOW
+forestplot(tabletext, boxsize = 0.2,
+           
+           txt_gp = fpTxtGp(label = list(gpar(fontfamily = ""),
+                                         gpar(fontfamily = "",
+                                              col = "#660000")),
+                            ticks = gpar(fontfamily = "", cex = .7),
+                            xlab  = gpar(fontfamily = "", cex = 1)),
+           
+           title = c("Interaction of XXX with treatment, interaction p-value=XXX"),
+           graph.pos = 2,
+           cochrane_from_rmeta,new_page = TRUE,
+           is.summary = c(TRUE,TRUE,rep(FALSE,9),TRUE),
+           clip = c(0.1,2.5), 
+           xlog = TRUE, 
+           xticks = xticks ,
+           xlab = "Adjusted odds ratio",
+           col = fpColors(box = "royalblue",
+                          line = "darkblue",
+                          summary = "royalblue"))
 
 
 
+# remove overall
+# interaction if not all on same vertical line
+options(scipen = 999)    
+forestplot(tabletext[-(dim(tabletext)[1]),], boxsize = 0.2, 
+           
+           txt_gp = fpTxtGp(label = list(gpar(fontfamily = ""),
+                                         gpar(fontfamily = "",
+                                              col = "#660000")),
+                            ticks = gpar(fontfamily = "", cex = .7),
+                            xlab  = gpar(fontfamily = "", cex = 1)),
+           
+           title = c("Interaction of XXX with treatment, interaction p-value=XXX"),
+           graph.pos = 2,
+           cochrane_from_rmeta[-(dim(cochrane_from_rmeta)[1]),],
+           
+           new_page = TRUE,
+           is.summary = c(TRUE,TRUE,rep(FALSE,9)),
+           clip = c(0.1,2.5), 
+           xlog = TRUE, 
+           xticks = xticks ,
+           xlab = "Adjusted odds ratio",
+           col = fpColors(box = "royalblue",
+                          line = "darkblue",
+                          summary = "royalblue"))
 
-
-
+anova(A)
 
 
 
