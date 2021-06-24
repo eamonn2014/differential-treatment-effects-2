@@ -3,7 +3,7 @@
 #https://stackoverflow.com/questions/26955334/how-to-create-a-factor-interaction-variable-in-r-why-cant-i-just-multiply
  
 # N=4000 # population size
-# n=4000 # sample size   
+# n=4000 # sample size    
 # 
 # race=sample(as.factor(c(rep("white",.8*N), rep("minority",.2*N))),n, replace=T)
 # 
