@@ -1704,24 +1704,21 @@ server <- shinyServer(function(input, output   ) {
         
         da <- lp1x()$datx 
         
-        # da$trt <-     factor(da$trt)
-        # da$smoking <- factor(da$smoking)
-        # da$fact1 <-   factor(da$fact1)
-        # da$binary2 <-factor(da$binary2)
-        # da$sex <-     factor(da$sex)
-        # da$bmi <-     factor(da$bmi)
-        
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # labels for forest plots
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 9 unobserved parameters
         label(da$age)                <- 'Age'                       # labels for forest plots
         label(da$trt)                <- 'Treatment'
-        label(da$back)               <- 'axialPsA & spine SIJ deg chgs'
+        label(da$back)               <- 'axialPsA & spine SIJ deg chgs' 
         label(da$smoking)            <- 'Smoking'
         label(da$berlin.spine)       <- 'Berlin Spine'
         label(da$berlin.spj)         <- 'Berlin SPJ'
-        label(da$deg.chg)            <- 'deg. change'
-        label(da$FASSS)              <- "FASSS"
+        label(da$deg.chg)            <- 'deg. change'#
+        label(da$FASSS)              <- "FASSS"#
         label(da$sex)                <- 'Sex'
-        label(da$disease.duration)   <- 'disease duration (yrs)'
-        label(da$disease.severity)   <- 'disease severity'
+        label(da$disease.duration)   <- 'disease duration (yrs)'#
+        label(da$disease.severity)   <- 'disease severity'#
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         dd <<- datadist(da)
         options(datadist="dd")
@@ -1734,32 +1731,32 @@ server <- shinyServer(function(input, output   ) {
         dd$limits$age[1] <<- Ages[1]
         dd$limits$age[3] <<- Ages[2]
         
-        Ages <-   (as.numeric(unlist(strsplit(input$biomarker.range,","))))    
+        Ages <-   (as.numeric(unlist(strsplit(input$deg.chg.range,","))))    
         
-        dd$limits$covar3[1] <<- Ages[1]
-        dd$limits$covar3[3] <<- Ages[2]
+        dd$limits$deg.chg[1] <<- Ages[1]
+        dd$limits$deg.chg[3] <<- Ages[2]
         
-        Ages <-   (as.numeric(unlist(strsplit(input$blood.range,","))))    
+        Ages <-   (as.numeric(unlist(strsplit(input$FASSS.range,","))))    
         
-        dd$limits$covar1[1] <<- Ages[1]
-        dd$limits$covar1[3] <<- Ages[2]
-        
-        
-        Ages <-   (as.numeric(unlist(strsplit(input$vas.range,","))))    
-        
-        dd$limits$vas[1] <<- Ages[1]
-        dd$limits$vas[3] <<- Ages[2]
-        
-        Ages <-   (as.numeric(unlist(strsplit(input$time.range,","))))    
-        
-        dd$limits$time[1] <<- Ages[1]
-        dd$limits$time[3] <<- Ages[2]
+        dd$limits$FASSS[1] <<- Ages[1]
+        dd$limits$FASSS[3] <<- Ages[2]
         
         
-        Ages <-   (as.numeric(unlist(strsplit(input$fitness.range,","))))    
+        Ages <-   (as.numeric(unlist(strsplit(input$disease.duration.range,","))))    
         
-        dd$limits$covar2[1] <<- Ages[1]
-        dd$limits$covar2[3] <<- Ages[2]
+        dd$limits$disease.duration[1] <<- Ages[1]
+        dd$limits$disease.duration[3] <<- Ages[2]
+        
+        Ages <-   (as.numeric(unlist(strsplit(input$disease.severity.range,","))))    
+        
+        dd$limits$disease.severity[1] <<- Ages[1]
+        dd$limits$disease.severity[3] <<- Ages[2]
+        
+        
+        # Ages <-   (as.numeric(unlist(strsplit(input$fitness.range,","))))    
+        # 
+        # dd$limits$covar2[1] <<- Ages[1]
+        # dd$limits$covar2[3] <<- Ages[2]
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # age
@@ -2455,15 +2452,15 @@ server <- shinyServer(function(input, output   ) {
         # allow the figure to change based on inputs
         v0. <-  (as.numeric(    eval(parse(text= (input$adj.smoking   )) ) ))
         v1. <-  (as.numeric(    eval(parse(text= (input$adj.age       )) ) ))
-        v2. <-  (as.numeric(    eval(parse(text= (input$adj.biomarker )) ) ))
-        v3. <-  (as.numeric(    eval(parse(text= (input$adj.blood     )) ) ))
-        v4. <-  (as.numeric(    eval(parse(text= (input$adj.vas       )) ) ))
-        v5. <-  (as.numeric(    eval(parse(text= (input$adj.time      )) ) ))
-        v6. <-  (as.numeric(    eval(parse(text= (input$adj.fitness   )) ) ))
-        v7. <-  (as.numeric(    eval(parse(text= (input$adj.history   )) ) ))
-        v8. <-  (as.numeric(    eval(parse(text= (input$adj.employed  )) ) ))
-        v9. <-  (as.numeric(    eval(parse(text= (input$adj.sex       )) ) ))
-        v10. <- (as.numeric(    eval(parse(text= (input$adj.BMI       )) ) ))
+        v2. <-  (as.numeric(    eval(parse(text= (input$adj.back      )) ) ))
+        v3. <-  (as.numeric(    eval(parse(text= (input$adj.berlin.spine     )) ) ))
+        v4. <-  (as.numeric(    eval(parse(text= (input$adj.berlin.spj       )) ) ))
+        v5. <-  (as.numeric(    eval(parse(text= (input$adj.deg.ch      )) ) ))
+        v6. <-  (as.numeric(    eval(parse(text= (input$adj.FASSS   )) ) ))
+        v7. <-  (as.numeric(    eval(parse(text= (input$adj.sex   )) ) ))
+        v8. <-  (as.numeric(    eval(parse(text= (input$adj.disease.duration  )) ) ))
+        v9. <-  (as.numeric(    eval(parse(text= (input$adj.disease.severity       )) ) ))
+       # v10. <- (as.numeric(    eval(parse(text= (input$adj.BMI       )) ) ))
         
         ##add in means of continuous vars here
         
@@ -2479,7 +2476,7 @@ server <- shinyServer(function(input, output   ) {
         
         
          
-        v1 <-  summary(x$A, smoking="Never", age, back="No changes",  berlin.spine="no", 
+        A1 <-  summary(x$A, smoking="Never", age, back="No changes",  berlin.spine="no", 
                        berlin.spj="no", deg.ch=1, FASSS=1 , sex="female", trt="placebo" , 
                        disease.duration=5,
                        disease.severity=3, 
@@ -2488,7 +2485,7 @@ server <- shinyServer(function(input, output   ) {
       
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        v2  <-summary(x$A, smoking="Never", age, back="No changes",  berlin.spine="no", 
+        A2  <-summary(x$A, smoking="Never", age, back="No changes",  berlin.spine="no", 
                       berlin.spj="no", deg.chg=1, FASSS=1, sex="female", trt="xdrug",  
                       disease.duration=5, 
                       disease.severity=3, 
